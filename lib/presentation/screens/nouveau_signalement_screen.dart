@@ -10,6 +10,7 @@ import '../../core/utils/validators.dart';
 import '../../data/models/report.dart';
 import '../providers/auth_provider.dart';
 import '../providers/service_providers.dart';
+import '../widgets/report_map.dart';
 import 'confirmation_screen.dart';
 
 class NouveauSignalementScreen extends ConsumerStatefulWidget {
@@ -242,20 +243,54 @@ class _NouveauSignalementScreenState
       );
     }
 
-    final located = _position != null;
-    return Row(
+    final position = _position;
+    if (position == null) {
+      return const Row(
+        children: [
+          Icon(
+            Icons.location_off,
+            size: 18,
+            color: AppColors.textDisabled,
+          ),
+          SizedBox(width: 8),
+          Text(
+            'GPS indisponible — envoi sans localisation',
+            style: TextStyle(color: AppColors.textSecondary),
+          ),
+        ],
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(
-          located ? Icons.location_on : Icons.location_off,
-          size: 18,
-          color: located ? AppColors.primary : AppColors.textDisabled,
+        Row(
+          children: [
+            const Icon(
+              Icons.location_on,
+              size: 18,
+              color: AppColors.primary,
+            ),
+            const SizedBox(width: 8),
+            const Text(
+              'Localisation détectée',
+              style: TextStyle(color: AppColors.textSecondary),
+            ),
+            const Spacer(),
+            Text(
+              '${position.latitude.toStringAsFixed(5)}, '
+              '${position.longitude.toStringAsFixed(5)}',
+              style: const TextStyle(
+                fontSize: 12,
+                color: AppColors.primaryDark,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(width: 8),
-        Text(
-          located
-              ? 'Localisation détectée'
-              : 'GPS indisponible — envoi sans localisation',
-          style: const TextStyle(color: AppColors.textSecondary),
+        const SizedBox(height: 8),
+        ReportMap(
+          latitude: position.latitude,
+          longitude: position.longitude,
         ),
       ],
     );
