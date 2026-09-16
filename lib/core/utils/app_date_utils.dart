@@ -13,4 +13,12 @@ class AppDateUtils {
 
   static String formatLongDate(DateTime date) =>
       DateFormat.yMMMMEEEEd('fr_FR').format(date);
+
+  /// Ex. : "Mer. 17 sept."
+  static String formatShortDate(DateTime date) {
+    final weekDay = DateFormat('EEE', 'fr_FR').format(date);
+    final day = DateFormat('d').format(date);
+    final month = DateFormat.MMM('fr_FR').format(date);
+    return '$weekDay $day $month';
+  }
 }
