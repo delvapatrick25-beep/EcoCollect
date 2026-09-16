@@ -1,11 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_colors.dart';
+import '../providers/service_providers.dart';
 import '../widgets/loading_widget.dart';
+import 'authentification_screen.dart';
+import 'home_screen.dart';
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
+
+  @override
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends ConsumerState<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _redirect();
+  }
+
+  Future<void> _redirect() async {
+    await Future<void>.delayed(AppConstants.splashDuration);
+
+    if (!mounted) return;
+
+    final isAuthenticated =
+        ref.read(authServiceProvider).currentUser != null;
+
+    await Navigator.of(context).pushReplacement(
+      MaterialPageRoute<void>(
+        builder: (_) => isAuthenticated
+            ? const HomeScreen()
+            : const AuthentificationScreen(),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
