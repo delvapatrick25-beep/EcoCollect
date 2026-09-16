@@ -23,14 +23,15 @@ class ReportMapper {
     final data = snapshot.data() ?? <String, dynamic>{};
     return Report(
       id: data['reportId'] as String? ?? snapshot.id,
-      userId: data['userId'] as String,
-      type: ReportTypeIn.fromName(data['type'] as String),
-      description: data['description'] as String,
+      userId: data['userId'] as String? ?? '',
+      type: ReportTypeIn.fromName(data['type'] as String? ?? ''),
+      description: data['description'] as String? ?? '',
       photoUrl: data['photoUrl'] as String?,
       latitude: (data['latitude'] as num?)?.toDouble(),
       longitude: (data['longitude'] as num?)?.toDouble(),
-      createdAt: (data['createdAt'] as Timestamp).toDate(),
-      status: ReportStatusIn.fromName(data['status'] as String),
+      createdAt: (data['createdAt'] as Timestamp?)?.toDate() ??
+          DateTime.fromMillisecondsSinceEpoch(0),
+      status: ReportStatusIn.fromName(data['status'] as String? ?? ''),
     );
   }
 }

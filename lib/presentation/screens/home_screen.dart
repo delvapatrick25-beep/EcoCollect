@@ -15,14 +15,16 @@ import 'nouveau_signalement_screen.dart';
 import 'points_de_tri_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, this.initialIndex = 0});
+
+  final int initialIndex;
 
   @override
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  int _selectedIndex = 0;
+  late int _selectedIndex = widget.initialIndex;
 
   void _onTabChanged(int index) => setState(() => _selectedIndex = index);
 

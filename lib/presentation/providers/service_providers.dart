@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/repositories/firestore_report_repository.dart';
 import '../../data/repositories/firestore_user_repository.dart';
+import '../../data/repositories/report_repository.dart';
 import '../../data/repositories/user_repository.dart';
 import '../../data/services/cloud_firestore_service.dart';
 import '../../data/services/firebase_auth_service.dart';
@@ -23,4 +25,8 @@ final locationServiceProvider = Provider<LocationService>((ref) {
 
 final userRepositoryProvider = Provider<UserRepository>((ref) {
   return FirestoreUserRepository(ref.watch(firestoreServiceProvider));
+});
+
+final reportRepositoryProvider = Provider<ReportRepository>((ref) {
+  return FirestoreReportRepository(ref.watch(firestoreServiceProvider));
 });
