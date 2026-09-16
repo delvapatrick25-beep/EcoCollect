@@ -16,6 +16,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class _FakeAuthService implements AuthService {
   @override
@@ -63,6 +64,10 @@ Widget _wrap(Widget child) {
 }
 
 void main() {
+  setUpAll(() async {
+    await initializeDateFormatting('fr_FR');
+  });
+
   testWidgets('L:application se lance sur le SplashScreen', (
     WidgetTester tester,
   ) async {
