@@ -5,6 +5,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/utils/app_date_utils.dart';
 import '../../data/models/report.dart';
 import '../providers/service_providers.dart';
+import '../widgets/report_map.dart';
 
 class DetailsSignalementScreen extends ConsumerWidget {
   final Report report;
@@ -83,14 +84,8 @@ class DetailsSignalementScreen extends ConsumerWidget {
             label: 'Date',
             value: AppDateUtils.formatDateTime(report.createdAt),
           ),
-          _buildInfoTile(
-            icon: Icons.location_on_outlined,
-            label: 'Localisation',
-            value: report.latitude != null && report.longitude != null
-                ? '${report.latitude!.toStringAsFixed(4)}, '
-                    '${report.longitude!.toStringAsFixed(4)}'
-                : 'Non fournie',
-          ),
+          const SizedBox(height: 4),
+          _buildLocationSection(),
           const SizedBox(height: 20),
           const Text(
             'Description',
@@ -116,6 +111,37 @@ class DetailsSignalementScreen extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildLocationSection() {
+    final latitude = report.latitude;
+    final longitude = report.longitude;
+
+    if (latitude == null || longitude == null) {
+      return _buildInfoTile(
+        icon: Icons.location_off_outlined,
+        label: 'Localisation',
+        value: 'Non disponible',
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildInfoTile(
+          icon: Icons.location_on_outlined,
+          label: 'Localisation',
+          value: '${latitude.toStringAsFixed(5)}, '
+              '${longitude.toStringAsFixed(5)}',
+        ),
+        const Text(
+          'Localisation du signalement',
+          style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+        ),
+        const SizedBox(height: 8),
+        ReportMap(latitude: latitude, longitude: longitude),
+      ],
     );
   }
 
