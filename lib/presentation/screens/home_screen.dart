@@ -5,8 +5,8 @@ import '../../core/theme/app_colors.dart';
 import '../../core/utils/app_date_utils.dart';
 import '../providers/collection_provider.dart';
 import '../providers/service_providers.dart';
+import '../providers/tip_provider.dart';
 import '../providers/user_provider.dart';
-import '../widgets/loading_widget.dart';
 import 'authentification_screen.dart';
 import 'collections_screen.dart';
 import 'conseils_screen.dart';
@@ -25,8 +25,22 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   late int _selectedIndex = widget.initialIndex;
+  late final PageController _pageController = PageController(initialPage: _selectedIndex);
 
-  void _onTabChanged(int index) => setState(() => _selectedIndex = index);
+  void _onTabChanged(int index) {
+    setState(() => _selectedIndex = index);
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeInOutCubic,
+    );
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   void _openNouveauSignalement() {
     Navigator.of(context).push(
@@ -46,8 +60,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
+      body: PageView(
+        controller: _pageController,
+        physics: const NeverScrollableScrollPhysics(),
         children: [
           _AccueilTab(
             onTabChanged: _onTabChanged,
@@ -117,49 +132,129 @@ class _AccueilTab extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.recycling, color: Colors.white, size: 22),
-            SizedBox(width: 6),
-            Text(
-              'EcoCollect',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
-            ),
-          ],
+        title: const Text(
+          'EcoCollect',
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout, color: Colors.white),
-            tooltip: 'Déconnexion',
+            icon: const Icon(Icons.logout),
             onPressed: onLogout,
           ),
+          const SizedBox(width: 8),
         ],
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Bonjour ${user?.pseudo ?? ''} ! 👋',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Votre impact commence ici.',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+            ),
+            const SizedBox(height: 24),
+            _buildNextCollectionCard(context, ref),
+            const SizedBox(height: 16),
+            _buildTipOfTheDayCard(context, ref),
+            const SizedBox(height: 24),
+            Text(
+              'Raccourcis',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 12),
+            _buildShortcutsGrid(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNextCollectionCard(BuildContext context, WidgetRef ref) {
+    final nextAsync = ref.watch(nextCollectionProvider);
+
+    return Card(
+      color: Theme.of(context).colorScheme.primaryContainer,
+      elevation: 0,
+      child: InkWell(
+        onTap: () => onTabChanged(1),
+        borderRadius: BorderRadius.circular(24),
+        child: Padding(
           padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
             children: [
-              Text(
-                'Bonjour ${user?.pseudo ?? ''} ! 👋',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Icon(
+                  Icons.restore_from_trash,
+                  color: AppColors.primary,
+                  size: 32,
                 ),
               ),
-              const SizedBox(height: 4),
-              const Text(
-                'Que souhaitez-vous faire ?',
-                style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'PROCHAINE COLLECTE',
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                            color: AppColors.primary,
+                          ),
+                    ),
+                    const SizedBox(height: 4),
+                    nextAsync.when(
+                      loading: () => const LinearProgressIndicator(),
+                      error: (e, _) => const Text('Erreur de chargement'),
+                      data: (collection) => collection == null
+                          ? const Text('Aucune collecte prévue')
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  collection.typeDechet,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.primaryDark,
+                                      ),
+                                ),
+                                Text(
+                                  '${AppDateUtils.formatShortDate(collection.date)} • ${collection.heure}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                        color: AppColors.primaryDark.withOpacity(0.7),
+                                      ),
+                                ),
+                              ],
+                            ),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 16),
-              _buildNextCollectionCard(ref),
-              const SizedBox(height: 20),
-              _buildShortcutsGrid(),
+              const Icon(Icons.chevron_right, color: AppColors.primary),
             ],
           ),
         ),
@@ -167,81 +262,64 @@ class _AccueilTab extends ConsumerWidget {
     );
   }
 
-  Widget _buildNextCollectionCard(WidgetRef ref) {
-    final nextAsync = ref.watch(nextCollectionProvider);
+  Widget _buildTipOfTheDayCard(BuildContext context, WidgetRef ref) {
+    final tipAsync = ref.watch(tipOfTheDayProvider);
 
-    return InkWell(
-      onTap: () => onTabChanged(1),
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: AppColors.primaryLight,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.primary, width: 1),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'PROCHAINE COLLECTE',
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  nextAsync.when(
-                    loading: () => const SizedBox(
-                      height: 20,
-                      child: Center(child: LoadingWidget()),
-                    ),
-                    error: (e, _) => const Text(
-                      'Impossible de charger',
-                      style: TextStyle(color: AppColors.error),
-                    ),
-                    data: (collection) => collection == null
-                        ? const Text(
-                            'Aucune collecte à venir',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: AppColors.textSecondary,
-                            ),
-                          )
-                        : Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '🗑️ ${collection.typeDechet}',
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.primaryDark,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                '${AppDateUtils.formatShortDate(collection.date)}'
-                                ' · ${collection.heure}'
-                                ' · ${collection.zone}',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Color(0xFF558B2F),
-                                ),
-                              ),
-                            ],
-                          ),
-                  ),
-                ],
+    return Card(
+      color: Theme.of(context).colorScheme.secondaryContainer,
+      elevation: 0,
+      child: InkWell(
+        onTap: () => onTabChanged(3),
+        borderRadius: BorderRadius.circular(24),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Icon(
+                  Icons.lightbulb,
+                  color: AppColors.accent,
+                  size: 32,
+                ),
               ),
-            ),
-            const Icon(Icons.chevron_right, color: AppColors.primary, size: 28),
-          ],
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'CONSEIL DU JOUR',
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                            color: AppColors.secondary,
+                          ),
+                    ),
+                    const SizedBox(height: 4),
+                    tipAsync.when(
+                      loading: () => const SizedBox(height: 20),
+                      error: (e, _) => const Text('Astuce écologique'),
+                      data: (tip) => Text(
+                        tip?.titre ?? 'Adoptez les bons gestes !',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primaryDark,
+                            ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right, color: AppColors.secondary),
+            ],
+          ),
         ),
       ),
     );
@@ -252,28 +330,32 @@ class _AccueilTab extends ConsumerWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: 2,
-      mainAxisSpacing: 10,
-      crossAxisSpacing: 10,
-      childAspectRatio: 1.8,
+      mainAxisSpacing: 12,
+      crossAxisSpacing: 12,
+      childAspectRatio: 1.5,
       children: [
         _ShortcutTile(
-          icon: Icons.event_outlined,
+          icon: Icons.event,
           label: 'Collectes',
+          color: AppColors.primaryLight,
           onTap: () => onTabChanged(1),
         ),
         _ShortcutTile(
-          icon: Icons.recycling_outlined,
+          icon: Icons.recycling,
           label: 'Points de tri',
+          color: const Color(0xFFF1F8E9),
           onTap: () => onTabChanged(2),
         ),
         _ShortcutTile(
-          icon: Icons.lightbulb_outline,
+          icon: Icons.lightbulb,
           label: 'Conseils',
+          color: const Color(0xFFFFF3E0),
           onTap: () => onTabChanged(3),
         ),
         _ShortcutTile(
-          icon: Icons.assessment_outlined,
+          icon: Icons.assessment,
           label: 'Mes signalements',
+          color: const Color(0xFFE3F2FD),
           onTap: () => onTabChanged(4),
         ),
       ],
@@ -285,35 +367,36 @@ class _ShortcutTile extends StatelessWidget {
   const _ShortcutTile({
     required this.icon,
     required this.label,
+    required this.color,
     required this.onTap,
   });
 
   final IconData icon;
   final String label;
+  final Color color;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.primary, width: 1),
-        ),
+    return Card(
+      color: color,
+      elevation: 0,
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: AppColors.primary, size: 24),
-            const SizedBox(height: 4),
+            Icon(icon, color: AppColors.primary, size: 28),
+            const SizedBox(height: 8),
             Text(
               label,
               style: const TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: AppColors.primary,
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: AppColors.primaryDark,
               ),
             ),
           ],
