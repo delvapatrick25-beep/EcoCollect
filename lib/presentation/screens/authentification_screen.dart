@@ -41,55 +41,70 @@ class _AuthentificationScreenState extends ConsumerState<AuthentificationScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 420),
+              constraints: const BoxConstraints(maxWidth: 400),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const Icon(
                     Icons.recycling,
-                    size: 72,
+                    size: 80,
                     color: AppColors.primary,
                   ),
-                  const SizedBox(height: 8),
-                  const Text(
+                  const SizedBox(height: 16),
+                  Text(
                     AppConstants.appName,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primaryDark,
-                      letterSpacing: 2,
-                    ),
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primaryDark,
+                          letterSpacing: 2,
+                        ),
                   ),
-                  const SizedBox(height: 24),
+                  Text(
+                    AppConstants.appTagline,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                  ),
+                  const SizedBox(height: 40),
                   _buildModeSwitcher(),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 32),
                   Form(
                     key: _formKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         _buildEmailField(),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 16),
                         _buildPasswordField(),
                         if (_mode == _AuthMode.signUp) ...[
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 16),
                           _buildPseudoField(),
                         ],
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 24),
                         if (_errorMessage != null) ...[
-                          Text(
-                            _errorMessage!,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(color: AppColors.error),
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: AppColors.error.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              _errorMessage!,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: AppColors.error,
+                                fontSize: 13,
+                              ),
+                            ),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 16),
                         ],
                         _buildSubmitButton(),
                       ],
@@ -106,15 +121,16 @@ class _AuthentificationScreenState extends ConsumerState<AuthentificationScreen>
 
   Widget _buildModeSwitcher() {
     return Container(
+      height: 50,
       decoration: BoxDecoration(
-        color: AppColors.primaryLight,
-        borderRadius: BorderRadius.circular(8),
+        color: AppColors.surfaceVariant.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(16),
       ),
       padding: const EdgeInsets.all(4),
       child: Row(
         children: [
           _buildModeTab(
-            label: 'Se connecter',
+            label: 'Connexion',
             selected: _mode == _AuthMode.signIn,
             onTap: () => setState(() {
               _mode = _AuthMode.signIn;
@@ -122,7 +138,7 @@ class _AuthentificationScreenState extends ConsumerState<AuthentificationScreen>
             }),
           ),
           _buildModeTab(
-            label: 'Créer un compte',
+            label: 'Inscription',
             selected: _mode == _AuthMode.signUp,
             onTap: () => setState(() {
               _mode = _AuthMode.signUp;
@@ -142,20 +158,28 @@ class _AuthentificationScreenState extends ConsumerState<AuthentificationScreen>
     return Expanded(
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(12),
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(vertical: 10),
+          duration: const Duration(milliseconds: 250),
+          alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: selected ? AppColors.primary : Colors.transparent,
-            borderRadius: BorderRadius.circular(6),
+            color: selected ? Colors.white : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: selected
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    )
+                  ]
+                : null,
           ),
           child: Text(
             label,
-            textAlign: TextAlign.center,
             style: TextStyle(
-              color: selected ? Colors.white : AppColors.primaryDark,
-              fontWeight: FontWeight.w600,
+              color: selected ? AppColors.primary : AppColors.textSecondary,
+              fontWeight: selected ? FontWeight.bold : FontWeight.w500,
             ),
           ),
         ),
@@ -173,7 +197,6 @@ class _AuthentificationScreenState extends ConsumerState<AuthentificationScreen>
       decoration: const InputDecoration(
         labelText: 'Adresse e-mail',
         prefixIcon: Icon(Icons.email_outlined),
-        border: OutlineInputBorder(),
       ),
     );
   }
@@ -191,7 +214,6 @@ class _AuthentificationScreenState extends ConsumerState<AuthentificationScreen>
       decoration: InputDecoration(
         labelText: 'Mot de passe',
         prefixIcon: const Icon(Icons.lock_outline),
-        border: const OutlineInputBorder(),
         suffixIcon: IconButton(
           icon: Icon(
             _obscurePassword ? Icons.visibility_off : Icons.visibility,
@@ -211,11 +233,8 @@ class _AuthentificationScreenState extends ConsumerState<AuthentificationScreen>
       validator: Validators.validateRequired,
       onFieldSubmitted: (_) => _submit(),
       decoration: const InputDecoration(
-        labelText: 'Pseudo (salutation)',
+        labelText: 'Pseudo',
         prefixIcon: Icon(Icons.person_outline),
-        border: OutlineInputBorder(),
-        filled: true,
-        fillColor: AppColors.primaryLight,
       ),
     );
   }
@@ -223,13 +242,6 @@ class _AuthentificationScreenState extends ConsumerState<AuthentificationScreen>
   Widget _buildSubmitButton() {
     return FilledButton(
       onPressed: _submitting ? null : _submit,
-      style: FilledButton.styleFrom(
-        backgroundColor: AppColors.primary,
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
       child: _submitting
           ? const SizedBox(
               height: 20,
@@ -242,8 +254,7 @@ class _AuthentificationScreenState extends ConsumerState<AuthentificationScreen>
           : Text(
               _mode == _AuthMode.signIn
                   ? 'Se connecter'
-                  : 'Créer un compte',
-              style: const TextStyle(fontSize: 16),
+                  : 'Créer mon compte',
             ),
     );
   }

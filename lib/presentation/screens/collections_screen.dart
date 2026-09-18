@@ -48,7 +48,7 @@ class _CollectionsScreenState extends ConsumerState<CollectionsScreen> {
                         message: 'Aucune collecte pour cette zone',
                       )
                     : ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                         itemCount: visible.length,
                         itemBuilder: (_, i) {
                           final collection = visible[i];
@@ -140,13 +140,13 @@ class _InfoRow extends StatelessWidget {
           children: [
             TextSpan(
               text: '$label : ',
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.textSecondary,
               ),
             ),
             TextSpan(
               text: value,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),

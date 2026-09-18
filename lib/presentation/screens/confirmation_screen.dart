@@ -41,46 +41,57 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primaryLight,
       body: SafeArea(
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.symmetric(horizontal: 40),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
-                  Icons.check_circle,
-                  size: 96,
-                  color: AppColors.primary,
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryLight.withOpacity(0.5),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.check_circle,
+                    size: 100,
+                    color: AppColors.primary,
+                  ),
+                ),
+                const SizedBox(height: 32),
+                Text(
+                  'Signalement envoyé !',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryDark,
+                      ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Votre signalement a été enregistré avec succès et sera traité dans les plus brefs délais.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: AppColors.textSecondary, height: 1.5),
+                ),
+                const SizedBox(height: 48),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: _goToSignalements,
+                    child: const Text('Voir mes signalements'),
+                  ),
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'Signalement envoyé !',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primaryDark,
+                TextButton(
+                  onPressed: () => Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute<void>(builder: (_) => const HomeScreen()),
+                    (route) => false,
                   ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Votre signalement a été enregistré avec succès.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: AppColors.textSecondary),
-                ),
-                const SizedBox(height: 24),
-                FilledButton.icon(
-                  onPressed: _goToSignalements,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
-                    ),
+                  child: const Text(
+                    'Retour à l\'accueil',
+                    style: TextStyle(color: AppColors.primary),
                   ),
-                  icon: const Icon(Icons.assessment),
-                  label: const Text('Mes signalements'),
                 ),
               ],
             ),

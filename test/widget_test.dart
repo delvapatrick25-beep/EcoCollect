@@ -87,8 +87,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Bonjour Marie ! 👋'), findsOneWidget);
-      expect(find.text('Que souhaitez-vous faire ?'), findsOneWidget);
+      expect(find.text('Marie'), findsOneWidget);
+      expect(find.text('marie@test.com'), findsOneWidget);
+      expect(find.text('Votre impact commence ici.'), findsOneWidget);
       expect(find.text('PROCHAINE COLLECTE'), findsOneWidget);
       expect(find.text('Signaler'), findsOneWidget);
       expect(find.text('Collectes'), findsNWidgets(2));

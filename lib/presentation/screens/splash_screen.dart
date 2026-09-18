@@ -41,35 +41,52 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: AppColors.primaryLight,
       body: SafeArea(
         child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.recycling, size: 96, color: AppColors.primary),
-              SizedBox(height: 16),
-              Text(
-                AppConstants.appName,
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primaryDark,
-                  letterSpacing: 2,
+          child: TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0.0, end: 1.0),
+            duration: const Duration(milliseconds: 1000),
+            curve: Curves.easeOutBack,
+            builder: (context, value, child) {
+              return Transform.scale(
+                scale: 0.8 + (0.2 * value),
+                child: Opacity(
+                  opacity: value,
+                  child: child,
                 ),
-              ),
-              SizedBox(height: 8),
-              Text(
-                AppConstants.appTagline,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.textSecondary,
+              );
+            },
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.recycling,
+                  size: 100,
+                  color: AppColors.primary,
                 ),
-              ),
-              SizedBox(height: 32),
-              LoadingWidget(),
-            ],
+                const SizedBox(height: 24),
+                Text(
+                  AppConstants.appName,
+                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryDark,
+                        letterSpacing: 4,
+                      ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  AppConstants.appTagline,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppColors.textSecondary,
+                        letterSpacing: 1.1,
+                      ),
+                ),
+                const SizedBox(height: 48),
+                const LoadingWidget(),
+              ],
+            ),
           ),
         ),
       ),

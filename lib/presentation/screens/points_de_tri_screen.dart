@@ -23,7 +23,7 @@ class PointsDeTriScreen extends ConsumerWidget {
         data: (items) => items.isEmpty
             ? const EmptyState(message: 'Aucun point de tri')
             : ListView.builder(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                 itemCount: items.length,
                 itemBuilder: (_, i) {
                   final point = items[i];
@@ -97,14 +97,14 @@ class _PointRow extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     color: AppColors.textSecondary,
                   ),
                 ),
                 Text(
                   value,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
                     color: AppColors.textPrimary,
                     fontWeight: FontWeight.w500,

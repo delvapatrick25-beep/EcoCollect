@@ -16,16 +16,17 @@ class EmptyState extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              Icons.inbox_outlined,
-              size: 64,
-              color: AppColors.textDisabled,
+              Icons.auto_awesome_motion_outlined,
+              size: 80,
+              color: AppColors.primary.withOpacity(0.1),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: AppColors.textSecondary,
+                    fontWeight: FontWeight.w500,
                   ),
             ),
           ],

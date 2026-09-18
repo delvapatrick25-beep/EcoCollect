@@ -4,15 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/app_date_utils.dart';
 import '../providers/collection_provider.dart';
-import '../providers/service_providers.dart';
 import '../providers/tip_provider.dart';
 import '../providers/user_provider.dart';
-import 'authentification_screen.dart';
+import '../widgets/user_avatar.dart';
 import 'collections_screen.dart';
 import 'conseils_screen.dart';
 import 'mes_signalements_screen.dart';
 import 'nouveau_signalement_screen.dart';
 import 'points_de_tri_screen.dart';
+import 'profile_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key, this.initialIndex = 0});
@@ -48,15 +48,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Future<void> _logout() async {
-    await ref.read(authServiceProvider).signOut();
-    if (!mounted) return;
-    await Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute<void>(builder: (_) => const AuthentificationScreen()),
-      (route) => false,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,7 +57,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         children: [
           _AccueilTab(
             onTabChanged: _onTabChanged,
-            onLogout: _logout,
           ),
           const CollectionsScreen(),
           const PointsDeTriScreen(),
@@ -120,11 +110,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 class _AccueilTab extends ConsumerWidget {
   const _AccueilTab({
     required this.onTabChanged,
-    required this.onLogout,
   });
 
   final void Function(int) onTabChanged;
-  final VoidCallback onLogout;
+
+  void _openProfile(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => const ProfileScreen()),
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -132,14 +126,63 @@ class _AccueilTab extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'EcoCollect',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        foregroundColor: AppColors.textPrimary,
+        automaticallyImplyLeading: false,
+        centerTitle: false,
+        titleSpacing: 20,
+        title: InkWell(
+          onTap: () => _openProfile(context),
+          borderRadius: BorderRadius.circular(30),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: AppColors.primary.withOpacity(0.2),
+                      width: 2,
+                    ),
+                  ),
+                  child: UserAvatar(pseudo: user?.pseudo, radius: 22),
+                ),
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      user?.pseudo ?? 'Utilisateur',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                    ),
+                    Text(
+                      user?.email ?? '',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 8),
+                Icon(
+                  Icons.keyboard_arrow_right,
+                  size: 20,
+                  color: AppColors.primary.withOpacity(0.5),
+                ),
+              ],
+            ),
+          ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: onLogout,
+            icon: const Icon(Icons.notifications_none_outlined),
+            onPressed: () {},
           ),
           const SizedBox(width: 8),
         ],
@@ -150,17 +193,11 @@ class _AccueilTab extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Bonjour ${user?.pseudo ?? ''} ! 👋',
+              'Votre impact commence ici.',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
-                  ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Votre impact commence ici.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textSecondary,
                   ),
             ),
             const SizedBox(height: 24),
@@ -171,6 +208,7 @@ class _AccueilTab extends ConsumerWidget {
             Text(
               'Raccourcis',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
             ),
@@ -317,7 +355,7 @@ class _AccueilTab extends ConsumerWidget {
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right, color: AppColors.secondary),
+              Icon(Icons.chevron_right, color: AppColors.secondary),
             ],
           ),
         ),
@@ -393,7 +431,7 @@ class _ShortcutTile extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
                 color: AppColors.primaryDark,

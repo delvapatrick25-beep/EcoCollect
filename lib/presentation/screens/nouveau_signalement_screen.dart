@@ -114,31 +114,69 @@ class _NouveauSignalementScreenState
       appBar: AppBar(title: const Text('Nouveau signalement')),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 480),
+            constraints: const BoxConstraints(maxWidth: 500),
             child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _buildTypeField(),
-                  const SizedBox(height: 16),
-                  _buildDescriptionField(),
-                  const SizedBox(height: 16),
+                  Text(
+                    'Détails du problème',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(height: 12),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          _buildTypeField(),
+                          const SizedBox(height: 16),
+                          _buildDescriptionField(),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Preuve visuelle (Facultatif)',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(height: 12),
                   _buildPhotoSection(),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Localisation',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
                   const SizedBox(height: 12),
                   _buildLocationIndicator(),
                   if (_errorMessage != null) ...[
-                    const SizedBox(height: 16),
-                    Text(
-                      _errorMessage!,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(color: AppColors.error),
+                    const SizedBox(height: 24),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppColors.error.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        _errorMessage!,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: AppColors.error),
+                      ),
                     ),
                   ],
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 32),
                   _buildSubmitButton(),
+                  const SizedBox(height: 24),
                 ],
               ),
             ),
@@ -152,9 +190,8 @@ class _NouveauSignalementScreenState
     return DropdownButtonFormField<ReportType>(
       initialValue: _type,
       decoration: const InputDecoration(
-        labelText: 'Type de problème',
-        prefixIcon: Icon(Icons.warning_amber_outlined),
-        border: OutlineInputBorder(),
+        labelText: 'Nature du problème',
+        prefixIcon: Icon(Icons.category_outlined),
       ),
       items: [
         for (final type in ReportType.values)
@@ -163,149 +200,132 @@ class _NouveauSignalementScreenState
             child: Text(type.label),
           ),
       ],
-      validator: (value) => value == null
-          ? 'Choisissez un type de problème'
-          : null,
-      onChanged: _submitting
-          ? null
-          : (value) => setState(() => _type = value),
+      validator: (value) => value == null ? 'Sélectionnez un type' : null,
+      onChanged: _submitting ? null : (value) => setState(() => _type = value),
     );
   }
 
   Widget _buildDescriptionField() {
     return TextFormField(
       controller: _descriptionController,
-      maxLines: 5,
+      maxLines: 4,
       maxLength: 500,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: Validators.validateDescription,
       decoration: const InputDecoration(
-        labelText: 'Description du problème',
-        hintText: 'Décrivez le problème rencontré...',
+        labelText: 'Description',
+        hintText: 'Précisez le problème rencontré...',
         alignLabelWithHint: true,
-        border: OutlineInputBorder(),
       ),
     );
   }
 
   Widget _buildPhotoSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        OutlinedButton.icon(
-          onPressed: _submitting ? null : _pickPhoto,
-          icon: const Icon(Icons.add_photo_alternate_outlined),
-          label: const Text('Ajouter une photo (facultatif)'),
-        ),
-        if (_photoBytes != null) ...[
-          const SizedBox(height: 8),
-          Stack(
-            alignment: Alignment.topRight,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.memory(
-                  _photoBytes!,
-                  height: 160,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
+    return Card(
+      child: InkWell(
+        onTap: _submitting ? null : _pickPhoto,
+        borderRadius: BorderRadius.circular(24),
+        child: Container(
+          width: double.infinity,
+          height: _photoBytes != null ? 220 : 120,
+          padding: const EdgeInsets.all(8),
+          child: _photoBytes != null
+              ? Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.memory(
+                        _photoBytes!,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: IconButton.filled(
+                        onPressed: () => setState(() => _photoBytes = null),
+                        icon: const Icon(Icons.close),
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.black.withOpacity(0.5),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.add_a_photo_outlined,
+                      size: 32,
+                      color: AppColors.primary.withOpacity(0.7),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Cliquez pour ajouter une photo',
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              IconButton.filled(
-                onPressed: _submitting
-                    ? null
-                    : () => setState(() => _photoBytes = null),
-                icon: const Icon(Icons.close),
-                tooltip: 'Retirer la photo',
-              ),
-            ],
-          ),
-        ],
-      ],
+        ),
+      ),
     );
   }
 
   Widget _buildLocationIndicator() {
-    if (_locating) {
-      return const Row(
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: Column(
         children: [
-          SizedBox(
-            width: 16,
-            height: 16,
-            child: CircularProgressIndicator(strokeWidth: 2),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: _locating
+                ? const Row(
+                    children: [
+                      SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                      SizedBox(width: 12),
+                      Text('Localisation en cours...'),
+                    ],
+                  )
+                : Row(
+                    children: [
+                      Icon(
+                        _position != null ? Icons.location_on : Icons.location_off,
+                        color: _position != null ? AppColors.primary : AppColors.textDisabled,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          _position != null
+                              ? 'Position détectée automatiquement'
+                              : 'Position non disponible',
+                          style: const TextStyle(fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    ],
+                  ),
           ),
-          SizedBox(width: 8),
-          Text(
-            'Recherche de votre position...',
-            style: TextStyle(color: AppColors.textSecondary),
-          ),
+          if (!_locating && _position != null)
+            ReportMap(
+              latitude: _position!.latitude,
+              longitude: _position!.longitude,
+            ),
         ],
-      );
-    }
-
-    final position = _position;
-    if (position == null) {
-      return const Row(
-        children: [
-          Icon(
-            Icons.location_off,
-            size: 18,
-            color: AppColors.textDisabled,
-          ),
-          SizedBox(width: 8),
-          Text(
-            'GPS indisponible — envoi sans localisation',
-            style: TextStyle(color: AppColors.textSecondary),
-          ),
-        ],
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            const Icon(
-              Icons.location_on,
-              size: 18,
-              color: AppColors.primary,
-            ),
-            const SizedBox(width: 8),
-            const Text(
-              'Localisation détectée',
-              style: TextStyle(color: AppColors.textSecondary),
-            ),
-            const Spacer(),
-            Text(
-              '${position.latitude.toStringAsFixed(5)}, '
-              '${position.longitude.toStringAsFixed(5)}',
-              style: const TextStyle(
-                fontSize: 12,
-                color: AppColors.primaryDark,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        ReportMap(
-          latitude: position.latitude,
-          longitude: position.longitude,
-        ),
-      ],
+      ),
     );
   }
 
   Widget _buildSubmitButton() {
     return FilledButton(
       onPressed: _submitting ? null : _submit,
-      style: FilledButton.styleFrom(
-        backgroundColor: AppColors.primary,
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
       child: _submitting
           ? const SizedBox(
               height: 20,
@@ -315,7 +335,7 @@ class _NouveauSignalementScreenState
                 color: Colors.white,
               ),
             )
-          : const Text('Envoyer', style: TextStyle(fontSize: 16)),
+          : const Text('Envoyer le signalement'),
     );
   }
 }

@@ -6,13 +6,13 @@ class AppTheme {
   AppTheme._();
 
   static ThemeData get light {
-    const scheme = ColorScheme.light(
+    return _build(ColorScheme.light(
       primary: AppColors.primary,
       onPrimary: Colors.white,
       primaryContainer: AppColors.primaryLight,
       onPrimaryContainer: AppColors.primaryDark,
       secondary: AppColors.secondary,
-      onSecondary: Colors.white,
+      onSecondary: _darkSecondaryOn,
       secondaryContainer: AppColors.secondaryContainer,
       onSecondaryContainer: AppColors.primaryDark,
       tertiary: AppColors.accent,
@@ -23,13 +23,40 @@ class AppTheme {
       surface: AppColors.surface,
       onSurface: AppColors.textPrimary,
       surfaceContainerHighest: AppColors.surfaceVariant,
-    );
+    ));
+  }
 
+  static ThemeData get dark {
+    return _build(ColorScheme.dark(
+      primary: AppColors.primaryDark,
+      onPrimary: const Color(0xFF0B2A0E),
+      primaryContainer: AppColors.primaryLight,
+      onPrimaryContainer: Colors.white,
+      secondary: AppColors.secondary,
+      onSecondary: const Color(0xFF142410),
+      secondaryContainer: AppColors.secondaryContainer,
+      onSecondaryContainer: Colors.white,
+      tertiary: AppColors.accent,
+      onTertiary: const Color(0xFF3B1D00),
+      tertiaryContainer: AppColors.accentContainer,
+      onTertiaryContainer: const Color(0xFFFFD9A6),
+      error: AppColors.error,
+      onError: Colors.white,
+      surface: AppColors.surface,
+      onSurface: AppColors.textPrimary,
+      surfaceContainerHighest: AppColors.surfaceVariant,
+    ));
+  }
+
+  static Color get _darkSecondaryOn =>
+      const Color(0xFF16280F); // vert très foncé pour la marque.
+
+  static ThemeData _build(ColorScheme scheme) {
     return ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
       scaffoldBackgroundColor: AppColors.background,
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         elevation: 0,
@@ -53,14 +80,14 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.white,
+        fillColor: AppColors.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderSide: BorderSide(color: AppColors.border),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderSide: BorderSide(color: AppColors.border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
@@ -80,12 +107,12 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
         ),
-        titleTextStyle: const TextStyle(
+        titleTextStyle: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
           color: AppColors.textPrimary,
         ),
-        subtitleTextStyle: const TextStyle(
+        subtitleTextStyle: TextStyle(
           fontSize: 14,
           color: AppColors.textSecondary,
         ),

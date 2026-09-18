@@ -15,10 +15,20 @@ class ReportMap extends StatelessWidget {
   Widget build(BuildContext context) {
     final position = LatLng(latitude, longitude);
 
-    return SizedBox(
+    return Container(
       height: 220,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            spreadRadius: -2,
+          ),
+        ],
+      ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(24),
         child: GoogleMap(
           initialCameraPosition: CameraPosition(
             target: position,

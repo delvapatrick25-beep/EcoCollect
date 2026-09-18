@@ -23,7 +23,7 @@ class ConseilsScreen extends ConsumerWidget {
         data: (items) => items.isEmpty
             ? const EmptyState(message: 'Aucun conseil disponible')
             : ListView.builder(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                 itemCount: items.length,
                 itemBuilder: (_, i) {
                   final tip = items[i];
@@ -57,7 +57,7 @@ class ConseilsScreen extends ConsumerWidget {
             ),
             child: Text(
               tip.categorie,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.primaryDark,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
@@ -67,7 +67,7 @@ class ConseilsScreen extends ConsumerWidget {
           const SizedBox(height: 12),
           Text(
             tip.contenu,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 15,
               height: 1.5,
               color: AppColors.textPrimary,

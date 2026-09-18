@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/snackbar_utils.dart';
 import '../../data/models/report.dart';
 import '../../presentation/providers/report_provider.dart';
 import '../../presentation/providers/service_providers.dart';
@@ -29,12 +30,11 @@ class _MesSignalementsScreenState extends ConsumerState<MesSignalementsScreen> {
           .deleteReport(report);
     } catch (_) {
       if (!mounted) return false;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Impossible de supprimer le signalement')),
-      );
+      SnackBarUtils.showError(context, 'Impossible de supprimer le signalement');
       return false;
     }
     if (!mounted) return false;
+    SnackBarUtils.showSuccess(context, 'Signalement supprimé');
     setState(() => _deletedIds.add(report.id));
     return true;
   }
@@ -56,7 +56,7 @@ class _MesSignalementsScreenState extends ConsumerState<MesSignalementsScreen> {
           }
 
           return ListView.builder(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
             itemCount: visible.length,
             itemBuilder: (context, i) {
               final report = visible[i];
