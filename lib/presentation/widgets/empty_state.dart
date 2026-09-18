@@ -19,7 +19,7 @@ class EmptyState extends StatelessWidget {
             Icon(
               Icons.auto_awesome_motion_outlined,
               size: 80,
-              color: colorScheme.primary.withOpacity(0.15),
+              color: colorScheme.primary.withValues(alpha: 0.15),
             ),
             const SizedBox(height: 24),
             Text(

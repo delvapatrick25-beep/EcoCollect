@@ -52,7 +52,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: colorScheme.primaryContainer.withOpacity(0.5),
+                    color: colorScheme.primaryContainer.withValues(alpha: 0.5),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(

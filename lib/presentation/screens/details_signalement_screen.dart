@@ -144,7 +144,7 @@ class DetailsSignalementScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: _statusColor.withOpacity(0.1),
+        color: _statusColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(24),
       ),
       child: Row(

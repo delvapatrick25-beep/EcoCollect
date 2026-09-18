@@ -89,7 +89,7 @@ void main() {
 
       expect(find.text('Marie'), findsOneWidget);
       expect(find.text('marie@test.com'), findsOneWidget);
-      expect(find.text('Votre impact commence ici.'), findsOneWidget);
+      expect(find.text('Raccourcis'), findsOneWidget);
       expect(find.text('PROCHAINE COLLECTE'), findsOneWidget);
       expect(find.text('Signaler'), findsOneWidget);
       expect(find.text('Collectes'), findsNWidgets(2));

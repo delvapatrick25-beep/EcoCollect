@@ -1,79 +1,84 @@
 import 'package:flutter/material.dart';
 
+import 'app_colors.dart';
 
 class AppTheme {
   AppTheme._();
 
-  static ThemeData get light {
-    return _build(ColorScheme.light(
-      primary: const Color(0xFF2E7D32),
-      onPrimary: Colors.white,
-      primaryContainer: const Color(0xFFE8F5E9),
-      onPrimaryContainer: const Color(0xFF002104),
-      secondary: const Color(0xFF558B2F),
-      onSecondary: Colors.white,
-      secondaryContainer: const Color(0xFFDCEDC8),
-      onSecondaryContainer: const Color(0xFF131F0C),
-      tertiary: const Color(0xFFFF6F00),
-      onTertiary: Colors.white,
-      tertiaryContainer: const Color(0xFFFFE0B2),
-      error: const Color(0xFFBA1A1A),
-      onError: Colors.white,
-      surface: Colors.white,
-      onSurface: const Color(0xFF212121),
-      surfaceVariant: const Color(0xFFE0E0E0),
-      onSurfaceVariant: const Color(0xFF757575),
-      outline: const Color(0xFFBDBDBD),
-    ));
+  static ThemeData get light => _themeFor(Brightness.light);
+  static ThemeData get dark => _themeFor(Brightness.dark);
+
+  /// Construit le thème d'une brightness donnée en s'assurant que les getters
+  /// de [AppColors] renvoient les bonnes valeurs, puis restaure la brightness
+  /// active (celle lue par les widgets via `AppColors`).
+  static ThemeData _themeFor(Brightness brightness) {
+    final previous = AppColors.isDark ? Brightness.dark : Brightness.light;
+    AppColors.useBrightness(brightness);
+    try {
+      return _build(_scheme(brightness), AppColors.background);
+    } finally {
+      AppColors.useBrightness(previous);
+    }
   }
 
-  static ThemeData get dark {
-    return _build(ColorScheme.dark(
-      primary: const Color(0xFF81C784),
-      onPrimary: const Color(0xFF00390A),
-      primaryContainer: const Color(0xFF005313),
-      onPrimaryContainer: const Color(0xFF9DF49F),
-      secondary: const Color(0xFFA5D6A7),
-      onSecondary: const Color(0xFF00390E),
-      secondaryContainer: const Color(0xFF2F3D25),
-      onSecondaryContainer: const Color(0xFFD7E8CD),
-      tertiary: const Color(0xFFFFB74D),
-      onTertiary: const Color(0xFF4A2800),
-      tertiaryContainer: const Color(0xFF6D3C00),
-      onTertiaryContainer: const Color(0xFFFFDDB3),
-      error: const Color(0xFFFFB4AB),
-      onError: const Color(0xFF690005),
-      surface: const Color(0xFF1A1C19),
-      onSurface: const Color(0xFFE2E3DE),
-      surfaceVariant: const Color(0xFF424940),
-      onSurfaceVariant: const Color(0xFFC2C8BC),
-      outline: const Color(0xFF8C9388),
-    ));
+  static ColorScheme _scheme(Brightness brightness) {
+    final base = brightness == Brightness.light
+        ? const ColorScheme.light()
+        : const ColorScheme.dark();
+
+    return base.copyWith(
+      primary: AppColors.primary,
+      onPrimary: AppColors.onPrimary,
+      primaryContainer: AppColors.primaryContainer,
+      onPrimaryContainer: AppColors.onPrimaryContainer,
+      secondary: AppColors.secondary,
+      onSecondary: AppColors.onSecondary,
+      secondaryContainer: AppColors.secondaryContainer,
+      onSecondaryContainer: AppColors.onSecondaryContainer,
+      tertiary: AppColors.tertiary,
+      onTertiary: AppColors.onTertiary,
+      tertiaryContainer: AppColors.tertiaryContainer,
+      onTertiaryContainer: AppColors.onTertiaryContainer,
+      error: AppColors.error,
+      onError: AppColors.onError,
+      surface: AppColors.surface,
+      onSurface: AppColors.textPrimary,
+      surfaceContainerHighest: AppColors.surfaceContainerHighest,
+      onSurfaceVariant: AppColors.onSurfaceVariant,
+      outline: AppColors.border,
+    );
   }
 
-  static ThemeData _build(ColorScheme scheme) {
+  static ThemeData _build(ColorScheme scheme, Color scaffoldBg) {
+    final isDark = scheme.brightness == Brightness.dark;
+
     return ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
-      scaffoldBackgroundColor: scheme.background,
+      scaffoldBackgroundColor: scaffoldBg,
       appBarTheme: AppBarTheme(
-        backgroundColor: scheme.surface,
-        foregroundColor: scheme.onSurface,
+        backgroundColor: isDark ? AppColors.surface : AppColors.primaryBrand,
+        foregroundColor: AppColors.onAppBar,
         elevation: 0,
         centerTitle: true,
         titleTextStyle: TextStyle(
-          color: scheme.onSurface,
+          color: AppColors.onAppBar,
           fontSize: 18,
           fontWeight: FontWeight.bold,
         ),
+        iconTheme: IconThemeData(color: AppColors.onAppBar),
       ),
       cardTheme: CardThemeData(
-        elevation: 0,
+        elevation: isDark ? 0 : 3,
+        shadowColor: Colors.black.withValues(alpha: 0.15),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
+          side: isDark
+              ? BorderSide(color: scheme.outline.withValues(alpha: 0.2))
+              : BorderSide.none,
         ),
-        color: scheme.surface,
-        margin: const EdgeInsets.symmetric(vertical: 8),
+        color: AppColors.card,
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
@@ -100,7 +105,10 @@ class AppTheme {
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(color: scheme.primary, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 16,
+        ),
         labelStyle: TextStyle(color: scheme.onSurfaceVariant),
         prefixIconColor: scheme.onSurfaceVariant,
         suffixIconColor: scheme.onSurfaceVariant,
@@ -115,7 +123,10 @@ class AppTheme {
           return IconThemeData(color: scheme.onSurfaceVariant);
         }),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
-          final style = const TextStyle(fontSize: 12, fontWeight: FontWeight.w500);
+          final style = const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          );
           if (states.contains(WidgetState.selected)) {
             return style.copyWith(color: scheme.onSurface);
           }
@@ -124,9 +135,7 @@ class AppTheme {
       ),
       listTileTheme: ListTileThemeData(
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         titleTextStyle: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
@@ -139,11 +148,9 @@ class AppTheme {
         iconColor: scheme.primary,
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: scheme.surfaceVariant,
+        backgroundColor: scheme.surfaceContainerHighest,
         labelStyle: TextStyle(color: scheme.onSurfaceVariant),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         side: BorderSide.none,
       ),
     );

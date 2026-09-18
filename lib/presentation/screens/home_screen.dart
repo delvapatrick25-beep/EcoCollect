@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/theme/app_colors.dart';
 import '../../core/utils/app_date_utils.dart';
 import '../providers/collection_provider.dart';
 import '../providers/tip_provider.dart';
 import '../providers/user_provider.dart';
 import '../widgets/user_avatar.dart';
 import 'collections_screen.dart';
-
-
 import 'conseils_screen.dart';
 import 'mes_signalements_screen.dart';
 import 'nouveau_signalement_screen.dart';
@@ -26,7 +25,9 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   late int _selectedIndex = widget.initialIndex;
-  late final PageController _pageController = PageController(initialPage: _selectedIndex);
+  late final PageController _pageController = PageController(
+    initialPage: _selectedIndex,
+  );
 
   void _onTabChanged(int index) {
     setState(() => _selectedIndex = index);
@@ -58,9 +59,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),
         children: [
-          _AccueilTab(
-            onTabChanged: _onTabChanged,
-          ),
+          _AccueilTab(onTabChanged: _onTabChanged),
           const CollectionsScreen(),
           const PointsDeTriScreen(),
           const ConseilsScreen(),
@@ -111,27 +110,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 }
 
 class _AccueilTab extends ConsumerWidget {
-  const _AccueilTab({
-    required this.onTabChanged,
-  });
+  const _AccueilTab({required this.onTabChanged});
 
   final void Function(int) onTabChanged;
 
   void _openProfile(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => const ProfileScreen()),
-    );
+    Navigator.of(context)
+        .push(MaterialPageRoute<void>(builder: (_) => const ProfileScreen()));
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userProvider).value;
     final colorScheme = Theme.of(context).colorScheme;
+    final user = ref.watch(userProvider).value;
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: colorScheme.surface,
-        foregroundColor: colorScheme.onSurface,
+        backgroundColor: AppColors.isDark
+            ? AppColors.surface
+            : AppColors.primaryBrand,
+        foregroundColor: AppColors.onAppBar,
         automaticallyImplyLeading: false,
         centerTitle: false,
         titleSpacing: 20,
@@ -147,7 +145,7 @@ class _AccueilTab extends ConsumerWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: colorScheme.primary.withOpacity(0.2),
+                      color: AppColors.onAppBar.withValues(alpha: 0.4),
                       width: 2,
                     ),
                   ),
@@ -160,16 +158,18 @@ class _AccueilTab extends ConsumerWidget {
                   children: [
                     Text(
                       user?.pseudo ?? 'Utilisateur',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: colorScheme.onSurface,
-                          ),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: AppColors.onAppBar,
+                      ),
                     ),
                     Text(
                       user?.email ?? '',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
-                          ),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.onAppBar.withValues(alpha: 0.8),
+                      ),
                     ),
                   ],
                 ),
@@ -177,7 +177,7 @@ class _AccueilTab extends ConsumerWidget {
                 Icon(
                   Icons.keyboard_arrow_right,
                   size: 20,
-                  color: colorScheme.primary.withOpacity(0.5),
+                  color: AppColors.onAppBar.withValues(alpha: 0.7),
                 ),
               ],
             ),
@@ -185,7 +185,10 @@ class _AccueilTab extends ConsumerWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications_none_outlined),
+            icon: Icon(
+              Icons.notifications_none_outlined,
+              color: AppColors.onAppBar,
+            ),
             onPressed: () {},
           ),
           const SizedBox(width: 8),
@@ -196,25 +199,14 @@ class _AccueilTab extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Votre impact commence ici.',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.onSurface,
-                  ),
-            ),
-            const SizedBox(height: 24),
             _buildNextCollectionCard(context, ref),
             const SizedBox(height: 16),
             _buildTipOfTheDayCard(context, ref),
             const SizedBox(height: 24),
             Text(
               'Raccourcis',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(context).textTheme.titleMedium
+                  ?.copyWith(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             _buildShortcutsGrid(colorScheme),
@@ -258,10 +250,10 @@ class _AccueilTab extends ConsumerWidget {
                     Text(
                       'PROCHAINE COLLECTE',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
-                            color: colorScheme.primary,
-                          ),
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
+                        color: colorScheme.primary,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     nextAsync.when(
@@ -270,16 +262,16 @@ class _AccueilTab extends ConsumerWidget {
                       data: (collection) => collection == null
                           ? Text(
                               'Aucune collecte prévue',
-                              style: TextStyle(color: colorScheme.onPrimaryContainer),
+                              style: TextStyle(
+                                color: colorScheme.onPrimaryContainer,
+                              ),
                             )
                           : Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   collection.typeDechet,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
+                                  style: Theme.of(context).textTheme.titleMedium
                                       ?.copyWith(
                                         fontWeight: FontWeight.bold,
                                         color: colorScheme.onPrimaryContainer,
@@ -287,11 +279,10 @@ class _AccueilTab extends ConsumerWidget {
                                 ),
                                 Text(
                                   '${AppDateUtils.formatShortDate(collection.date)} • ${collection.heure}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
+                                  style: Theme.of(context).textTheme.bodySmall
                                       ?.copyWith(
-                                        color: colorScheme.onPrimaryContainer.withOpacity(0.7),
+                                        color: colorScheme.onPrimaryContainer
+                                            .withValues(alpha: 0.7),
                                       ),
                                 ),
                               ],
@@ -342,10 +333,10 @@ class _AccueilTab extends ConsumerWidget {
                     Text(
                       'CONSEIL DU JOUR',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
-                            color: colorScheme.secondary,
-                          ),
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
+                        color: colorScheme.secondary,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     tipAsync.when(
@@ -356,9 +347,9 @@ class _AccueilTab extends ConsumerWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: colorScheme.onSecondaryContainer,
-                            ),
+                          fontWeight: FontWeight.w600,
+                          color: colorScheme.onSecondaryContainer,
+                        ),
                       ),
                     ),
                   ],
@@ -384,25 +375,25 @@ class _AccueilTab extends ConsumerWidget {
         _ShortcutTile(
           icon: Icons.event,
           label: 'Collectes',
-          color: colorScheme.primaryContainer.withOpacity(0.5),
+          color: colorScheme.primaryContainer.withValues(alpha: 0.5),
           onTap: () => onTabChanged(1),
         ),
         _ShortcutTile(
           icon: Icons.recycling,
           label: 'Points de tri',
-          color: colorScheme.secondaryContainer.withOpacity(0.5),
+          color: colorScheme.secondaryContainer.withValues(alpha: 0.5),
           onTap: () => onTabChanged(2),
         ),
         _ShortcutTile(
           icon: Icons.lightbulb,
           label: 'Conseils',
-          color: colorScheme.tertiaryContainer.withOpacity(0.5),
+          color: colorScheme.tertiaryContainer.withValues(alpha: 0.5),
           onTap: () => onTabChanged(3),
         ),
         _ShortcutTile(
           icon: Icons.assessment,
           label: 'Mes signalements',
-          color: colorScheme.surfaceVariant.withOpacity(0.5),
+          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
           onTap: () => onTabChanged(4),
         ),
       ],
@@ -426,7 +417,7 @@ class _ShortcutTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     return Card(
       color: color,
       elevation: 0,

@@ -71,7 +71,7 @@ class ReportCard extends StatelessWidget {
                   ],
                 ),
               ),
-              Icon(Icons.chevron_right, color: colorScheme.onSurfaceVariant.withOpacity(0.5)),
+              Icon(Icons.chevron_right, color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
             ],
           ),
         ),

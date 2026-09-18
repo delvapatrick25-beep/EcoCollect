@@ -74,7 +74,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // --- E03 · Accueil ---
-      expect(find.text('Votre impact commence ici.'), findsOneWidget);
+      expect(find.text('Raccourcis'), findsOneWidget);
       expect(find.text('Marie'), findsWidgets);
       expect(find.text('PROCHAINE COLLECTE'), findsOneWidget);
       expect(find.text('Aucune collecte prévue'), findsOneWidget);

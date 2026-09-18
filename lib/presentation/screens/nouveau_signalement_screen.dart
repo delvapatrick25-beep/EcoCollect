@@ -249,7 +249,7 @@ class _NouveauSignalementScreenState
                         onPressed: () => setState(() => _photoBytes = null),
                         icon: const Icon(Icons.close),
                         style: IconButton.styleFrom(
-                          backgroundColor: Colors.black.withOpacity(0.5),
+                          backgroundColor: Colors.black.withValues(alpha: 0.5),
                         ),
                       ),
                     ),
@@ -261,7 +261,7 @@ class _NouveauSignalementScreenState
                     Icon(
                       Icons.add_a_photo_outlined,
                       size: 32,
-                      color: colorScheme.primary.withOpacity(0.7),
+                      color: colorScheme.primary.withValues(alpha: 0.7),
                     ),
                     const SizedBox(height: 8),
                     Text(
