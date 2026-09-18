@@ -22,6 +22,7 @@ class MesSignalementsScreen extends ConsumerStatefulWidget {
 
 class _MesSignalementsScreenState extends ConsumerState<MesSignalementsScreen> {
   final Set<String> _deletedIds = {};
+  ReportStatus? _selectedStatus;
 
   Future<bool> _confirmDelete(Report report) async {
     try {
@@ -44,46 +45,60 @@ class _MesSignalementsScreenState extends ConsumerState<MesSignalementsScreen> {
     final async = ref.watch(reportProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Mes signalements')),
+      appBar: AppBar(
+        title: const Text(
+          'Mes signalements',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: async.when(
         data: (items) {
           final visible = items
               .where((r) => !_deletedIds.contains(r.id))
+              .where((r) => _selectedStatus == null || r.status == _selectedStatus)
               .toList();
 
-          if (visible.isEmpty) {
-            return const EmptyState(message: 'Aucun signalement pour le moment');
-          }
-
-          return ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-            itemCount: visible.length,
-            itemBuilder: (context, i) {
-              final report = visible[i];
-              return Dismissible(
-                key: ValueKey('report-${report.id}'),
-                direction: DismissDirection.endToStart,
-                background: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                  padding: const EdgeInsets.only(right: 20),
-                  alignment: Alignment.centerRight,
-                  decoration: BoxDecoration(
-                    color: AppColors.error,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(Icons.delete_outline, color: Colors.white),
-                ),
-                confirmDismiss: (_) => _confirmDelete(report),
-                child: ReportCard(
-                  report: report,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) => DetailsSignalementScreen(report: report),
-                    ),
-                  ),
-                ),
-              );
-            },
+          return Column(
+            children: [
+              _buildStatusFilter(),
+              Expanded(
+                child: visible.isEmpty
+                    ? const EmptyState(message: 'Aucun signalement trouvé')
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                        itemCount: visible.length,
+                        itemBuilder: (context, i) {
+                          final report = visible[i];
+                          return Dismissible(
+                            key: ValueKey('report-${report.id}'),
+                            direction: DismissDirection.endToStart,
+                            background: Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                              padding: const EdgeInsets.only(right: 20),
+                              alignment: Alignment.centerRight,
+                              decoration: BoxDecoration(
+                                color: AppColors.error,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(Icons.delete_outline, color: Colors.white),
+                            ),
+                            confirmDismiss: (_) => _confirmDelete(report),
+                            child: ReportCard(
+                              report: report,
+                              onTap: () => Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                  builder: (_) => DetailsSignalementScreen(report: report),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+              ),
+            ],
           );
         },
         loading: () => const LoadingWidget(),
@@ -94,6 +109,37 @@ class _MesSignalementsScreenState extends ConsumerState<MesSignalementsScreen> {
             ref.invalidate(reportProvider);
           },
         ),
+      ),
+    );
+  }
+
+  Widget _buildStatusFilter() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      child: Row(
+        children: [
+          ChoiceChip(
+            label: const Text('Tous'),
+            selected: _selectedStatus == null,
+            onSelected: (selected) {
+              if (selected) setState(() => _selectedStatus = null);
+            },
+          ),
+          const SizedBox(width: 8),
+          ...ReportStatus.values.map((status) {
+            return Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: ChoiceChip(
+                label: Text(status.label),
+                selected: _selectedStatus == status,
+                onSelected: (selected) {
+                  setState(() => _selectedStatus = selected ? status : null);
+                },
+              ),
+            );
+          }).toList(),
+        ],
       ),
     );
   }

@@ -94,7 +94,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final collectionCount = ref.watch(collectionProvider).value?.length ?? 0;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Profil')),
+      appBar: AppBar(
+        title: const Text(
+          'Profil',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         children: [

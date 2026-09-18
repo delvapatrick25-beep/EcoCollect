@@ -26,7 +26,15 @@ class _CollectionsScreenState extends ConsumerState<CollectionsScreen> {
     final async = ref.watch(collectionProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Collectes')),
+      appBar: AppBar(
+        title: const Text(
+          'Collectes',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: async.when(
         data: (items) {
           if (items.isEmpty) {

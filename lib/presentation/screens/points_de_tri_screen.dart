@@ -10,29 +10,88 @@ import '../../presentation/widgets/error_widget.dart';
 import '../../presentation/widgets/loading_widget.dart';
 import '../../presentation/widgets/recycling_point_card.dart';
 
-class PointsDeTriScreen extends ConsumerWidget {
+class PointsDeTriScreen extends ConsumerStatefulWidget {
   const PointsDeTriScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PointsDeTriScreen> createState() => _PointsDeTriScreenState();
+}
+
+class _PointsDeTriScreenState extends ConsumerState<PointsDeTriScreen> {
+  final _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final async = ref.watch(recyclingPointProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Points de tri')),
+      appBar: AppBar(
+        title: const Text(
+          'Points de tri',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: async.when(
-        data: (items) => items.isEmpty
-            ? const EmptyState(message: 'Aucun point de tri')
-            : ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                itemCount: items.length,
-                itemBuilder: (_, i) {
-                  final point = items[i];
-                  return RecyclingPointCard(
-                    point: point,
-                    onTap: () => _showDetails(context, point),
-                  );
-                },
+        data: (items) {
+          final filteredItems = items.where((point) {
+            return point.nom.toLowerCase().contains(_searchQuery.toLowerCase());
+          }).toList();
+
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Rechercher un point de tri...',
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: _searchQuery.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() => _searchQuery = '');
+                            },
+                          )
+                        : null,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
+                  onChanged: (value) => setState(() => _searchQuery = value),
+                ),
               ),
+              Expanded(
+                child: filteredItems.isEmpty
+                    ? const EmptyState(message: 'Aucun point de tri trouvé')
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 0),
+                        itemCount: filteredItems.length,
+                        itemBuilder: (_, i) {
+                          final point = filteredItems[i];
+                          return RecyclingPointCard(
+                            point: point,
+                            onTap: () => _showDetails(context, point),
+                          );
+                        },
+                      ),
+              ),
+            ],
+          );
+        },
         loading: () => const LoadingWidget(),
         error: (e, _) => ErrorState(
           message: 'Impossible de charger les points de tri : $e',

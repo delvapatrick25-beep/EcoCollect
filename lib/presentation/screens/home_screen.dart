@@ -8,6 +8,8 @@ import '../providers/tip_provider.dart';
 import '../providers/user_provider.dart';
 import '../widgets/user_avatar.dart';
 import 'collections_screen.dart';
+
+
 import 'conseils_screen.dart';
 import 'mes_signalements_screen.dart';
 import 'nouveau_signalement_screen.dart';

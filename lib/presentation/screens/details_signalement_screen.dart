@@ -6,6 +6,7 @@ import '../../core/utils/app_date_utils.dart';
 import '../../core/utils/snackbar_utils.dart';
 import '../../data/models/report.dart';
 import '../providers/service_providers.dart';
+import '../widgets/location_address.dart';
 import '../widgets/report_map.dart';
 
 class DetailsSignalementScreen extends ConsumerWidget {
@@ -189,21 +190,36 @@ class DetailsSignalementScreen extends ConsumerWidget {
         Card(
           clipBehavior: Clip.antiAlias,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+                child: LocationAddress(
+                  latitude: latitude,
+                  longitude: longitude,
+                ),
+              ),
+              ReportMap(latitude: latitude, longitude: longitude),
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    const Icon(Icons.location_on, color: AppColors.primary),
-                    const SizedBox(width: 12),
+                    Icon(
+                      Icons.my_location,
+                      color: AppColors.textSecondary,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 8),
                     Text(
                       '${latitude.toStringAsFixed(5)}, ${longitude.toStringAsFixed(5)}',
-                      style: const TextStyle(fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 13,
+                      ),
                     ),
                   ],
                 ),
               ),
-              ReportMap(latitude: latitude, longitude: longitude),
             ],
           ),
         ),

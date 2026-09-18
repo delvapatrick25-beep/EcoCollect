@@ -10,6 +10,7 @@ import '../../core/utils/validators.dart';
 import '../../data/models/report.dart';
 import '../providers/auth_provider.dart';
 import '../providers/service_providers.dart';
+import '../widgets/location_address.dart';
 import '../widgets/report_map.dart';
 import 'confirmation_screen.dart';
 
@@ -303,12 +304,15 @@ class _NouveauSignalementScreenState
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: Text(
-                          _position != null
-                              ? 'Position détectée automatiquement'
-                              : 'Position non disponible',
-                          style: const TextStyle(fontWeight: FontWeight.w500),
-                        ),
+                        child: _position != null
+                            ? LocationAddress(
+                                latitude: _position!.latitude,
+                                longitude: _position!.longitude,
+                              )
+                            : const Text(
+                                'Position non disponible',
+                                style: TextStyle(fontWeight: FontWeight.w500),
+                              ),
                       ),
                     ],
                   ),
