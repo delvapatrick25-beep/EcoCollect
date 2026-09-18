@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/theme/app_colors.dart';
 import '../../core/utils/app_date_utils.dart';
 import '../../core/utils/snackbar_utils.dart';
 import '../../data/models/report.dart';
@@ -35,9 +34,9 @@ class DetailsSignalementScreen extends ConsumerWidget {
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text(
+            child: Text(
               'Supprimer',
-              style: TextStyle(color: AppColors.error),
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
           ),
         ],
@@ -55,12 +54,14 @@ class DetailsSignalementScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Détails du signalement')),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         children: [
-          _buildStatusHeader(),
+          _buildStatusHeader(colorScheme),
           const SizedBox(height: 24),
           if (report.photoUrl != null) ...[
             Text(
@@ -90,12 +91,14 @@ class DetailsSignalementScreen extends ConsumerWidget {
               child: Column(
                 children: [
                   _buildInfoTile(
+                    colorScheme: colorScheme,
                     icon: Icons.category_outlined,
                     label: 'Type',
                     value: report.type.label,
                   ),
                   const Divider(height: 24),
                   _buildInfoTile(
+                    colorScheme: colorScheme,
                     icon: Icons.calendar_today_outlined,
                     label: 'Date d\'envoi',
                     value: AppDateUtils.formatDateTime(report.createdAt),
@@ -120,12 +123,12 @@ class DetailsSignalementScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 24),
-          _buildLocationSection(context),
+          _buildLocationSection(context, colorScheme),
           const SizedBox(height: 32),
           FilledButton.tonalIcon(
             onPressed: () => _delete(context, ref),
             style: FilledButton.styleFrom(
-              foregroundColor: AppColors.error,
+              foregroundColor: colorScheme.error,
               padding: const EdgeInsets.symmetric(vertical: 16),
             ),
             icon: const Icon(Icons.delete_outline),
@@ -137,7 +140,7 @@ class DetailsSignalementScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatusHeader() {
+  Widget _buildStatusHeader(ColorScheme colorScheme) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -148,7 +151,7 @@ class DetailsSignalementScreen extends ConsumerWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.white,
               shape: BoxShape.circle,
             ),
@@ -160,7 +163,11 @@ class DetailsSignalementScreen extends ConsumerWidget {
             children: [
               Text(
                 'Statut actuel',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textSecondary),
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurfaceVariant,
+                ),
               ),
               Text(
                 report.status.label,
@@ -173,7 +180,7 @@ class DetailsSignalementScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildLocationSection(BuildContext context) {
+  Widget _buildLocationSection(BuildContext context, ColorScheme colorScheme) {
     final latitude = report.latitude;
     final longitude = report.longitude;
 
@@ -206,14 +213,14 @@ class DetailsSignalementScreen extends ConsumerWidget {
                   children: [
                     Icon(
                       Icons.my_location,
-                      color: AppColors.textSecondary,
+                      color: colorScheme.onSurfaceVariant,
                       size: 16,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       '${latitude.toStringAsFixed(5)}, ${longitude.toStringAsFixed(5)}',
                       style: TextStyle(
-                        color: AppColors.textSecondary,
+                        color: colorScheme.onSurfaceVariant,
                         fontSize: 13,
                       ),
                     ),
@@ -228,6 +235,7 @@ class DetailsSignalementScreen extends ConsumerWidget {
   }
 
   Widget _buildInfoTile({
+    required ColorScheme colorScheme,
     required IconData icon,
     required String label,
     required String value,
@@ -236,7 +244,7 @@ class DetailsSignalementScreen extends ConsumerWidget {
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
-          Icon(icon, color: AppColors.primary, size: 22),
+          Icon(icon, color: colorScheme.primary, size: 22),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -246,14 +254,14 @@ class DetailsSignalementScreen extends ConsumerWidget {
                   label,
                   style: TextStyle(
                     fontSize: 12,
-                    color: AppColors.textSecondary,
+                    color: colorScheme.onSurfaceVariant,
                   ),
                 ),
                 Text(
                   value,
                   style: TextStyle(
                     fontSize: 15,
-                    color: AppColors.textPrimary,
+                    color: colorScheme.onSurface,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
-import '../../core/theme/app_colors.dart';
 import '../../data/models/collection.dart';
 
 class CollectionCard extends StatelessWidget {
@@ -18,6 +17,7 @@ class CollectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final day = DateFormat('dd').format(collection.date);
     final month = DateFormat('MMM').format(collection.date).toUpperCase();
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
       child: InkWell(
@@ -31,7 +31,7 @@ class CollectionCard extends StatelessWidget {
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                  color: AppColors.primaryLight,
+                  color: colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(
@@ -39,18 +39,18 @@ class CollectionCard extends StatelessWidget {
                   children: [
                     Text(
                       day,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
+                        color: colorScheme.onPrimaryContainer,
                       ),
                     ),
                     Text(
                       month,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
-                        color: AppColors.primary,
+                        color: colorScheme.onPrimaryContainer,
                       ),
                     ),
                   ],
@@ -70,20 +70,20 @@ class CollectionCard extends StatelessWidget {
                     const SizedBox(height: 2),
                     Row(
                       children: [
-                        Icon(Icons.access_time, size: 14, color: AppColors.textSecondary),
+                        Icon(Icons.access_time, size: 14, color: colorScheme.onSurfaceVariant),
                         const SizedBox(width: 4),
                         Text(
                           collection.heure,
-                          style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                          style: TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant),
                         ),
                         const SizedBox(width: 12),
-                        Icon(Icons.location_on_outlined, size: 14, color: AppColors.textSecondary),
+                        Icon(Icons.location_on_outlined, size: 14, color: colorScheme.onSurfaceVariant),
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
                             collection.zone,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                            style: TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant),
                           ),
                         ),
                       ],
@@ -91,7 +91,7 @@ class CollectionCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right, color: AppColors.primary),
+              Icon(Icons.chevron_right, color: colorScheme.primary),
             ],
           ),
         ),

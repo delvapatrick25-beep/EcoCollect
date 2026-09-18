@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_colors.dart';
 
 /// Avatar circulaire avec les initiales du pseudo (ou une icône par défaut).
 class UserAvatar extends StatelessWidget {
@@ -30,7 +29,7 @@ class UserAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final avatar = CircleAvatar(
       radius: radius,
-      backgroundColor: AppColors.primary,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       child: Text(
         _initials,
         style: TextStyle(

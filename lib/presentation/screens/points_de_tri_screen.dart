@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/theme/app_colors.dart';
 import '../../data/models/recycling_point.dart';
 import '../../presentation/providers/recycling_point_provider.dart';
 import '../../presentation/widgets/detail_bottom_sheet.dart';
@@ -143,12 +142,14 @@ class _PointRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: AppColors.primary, size: 20),
+          Icon(icon, color: colorScheme.primary, size: 20),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -158,14 +159,14 @@ class _PointRow extends StatelessWidget {
                   label,
                   style: TextStyle(
                     fontSize: 12,
-                    color: AppColors.textSecondary,
+                    color: colorScheme.onSurfaceVariant,
                   ),
                 ),
                 Text(
                   value,
                   style: TextStyle(
                     fontSize: 15,
-                    color: AppColors.textPrimary,
+                    color: colorScheme.onSurface,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

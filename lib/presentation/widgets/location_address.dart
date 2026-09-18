@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/theme/app_colors.dart';
 import '../../domain/services/geocoding_service.dart';
 import '../providers/service_providers.dart';
 
@@ -36,7 +35,7 @@ class LocationAddress extends ConsumerWidget {
       children: [
         Row(
           children: [
-            const Icon(Icons.location_on, color: AppColors.primary, size: 18),
+            Icon(Icons.location_on, color: Theme.of(context).colorScheme.primary, size: 18),
             const SizedBox(width: 8),
             Expanded(
               child: addressAsync.when(

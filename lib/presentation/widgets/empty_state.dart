@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_colors.dart';
 
 class EmptyState extends StatelessWidget {
   final String message;
@@ -9,6 +8,8 @@ class EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -18,14 +19,14 @@ class EmptyState extends StatelessWidget {
             Icon(
               Icons.auto_awesome_motion_outlined,
               size: 80,
-              color: AppColors.primary.withOpacity(0.1),
+              color: colorScheme.primary.withOpacity(0.15),
             ),
             const SizedBox(height: 24),
             Text(
               message,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: AppColors.textSecondary,
+                    color: colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w500,
                   ),
             ),

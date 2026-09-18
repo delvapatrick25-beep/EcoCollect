@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/app_constants.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/utils/auth_error_map.dart';
 import '../../core/utils/validators.dart';
 import '../../data/models/user_account.dart';
@@ -40,6 +39,9 @@ class _AuthentificationScreenState extends ConsumerState<AuthentificationScreen>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -50,30 +52,30 @@ class _AuthentificationScreenState extends ConsumerState<AuthentificationScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.recycling,
                     size: 80,
-                    color: AppColors.primary,
+                    color: colorScheme.primary,
                   ),
                   const SizedBox(height: 16),
                   Text(
                     AppConstants.appName,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    style: textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.primaryDark,
+                          color: colorScheme.onSurface,
                           letterSpacing: 2,
                         ),
                   ),
                   Text(
                     AppConstants.appTagline,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppColors.textSecondary,
+                    style: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
                         ),
                   ),
                   const SizedBox(height: 40),
-                  _buildModeSwitcher(),
+                  _buildModeSwitcher(colorScheme),
                   const SizedBox(height: 32),
                   Form(
                     key: _formKey,
@@ -92,14 +94,14 @@ class _AuthentificationScreenState extends ConsumerState<AuthentificationScreen>
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: AppColors.error.withOpacity(0.1),
+                              color: colorScheme.errorContainer,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
                               _errorMessage!,
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: AppColors.error,
+                              style: TextStyle(
+                                color: colorScheme.onErrorContainer,
                                 fontSize: 13,
                               ),
                             ),
@@ -119,11 +121,11 @@ class _AuthentificationScreenState extends ConsumerState<AuthentificationScreen>
     );
   }
 
-  Widget _buildModeSwitcher() {
+  Widget _buildModeSwitcher(ColorScheme colorScheme) {
     return Container(
       height: 50,
       decoration: BoxDecoration(
-        color: AppColors.surfaceVariant.withOpacity(0.5),
+        color: colorScheme.surfaceVariant.withOpacity(0.5),
         borderRadius: BorderRadius.circular(16),
       ),
       padding: const EdgeInsets.all(4),
@@ -132,6 +134,7 @@ class _AuthentificationScreenState extends ConsumerState<AuthentificationScreen>
           _buildModeTab(
             label: 'Connexion',
             selected: _mode == _AuthMode.signIn,
+            colorScheme: colorScheme,
             onTap: () => setState(() {
               _mode = _AuthMode.signIn;
               _errorMessage = null;
@@ -140,6 +143,7 @@ class _AuthentificationScreenState extends ConsumerState<AuthentificationScreen>
           _buildModeTab(
             label: 'Inscription',
             selected: _mode == _AuthMode.signUp,
+            colorScheme: colorScheme,
             onTap: () => setState(() {
               _mode = _AuthMode.signUp;
               _errorMessage = null;
@@ -153,6 +157,7 @@ class _AuthentificationScreenState extends ConsumerState<AuthentificationScreen>
   Widget _buildModeTab({
     required String label,
     required bool selected,
+    required ColorScheme colorScheme,
     required VoidCallback onTap,
   }) {
     return Expanded(
@@ -163,12 +168,12 @@ class _AuthentificationScreenState extends ConsumerState<AuthentificationScreen>
           duration: const Duration(milliseconds: 250),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: selected ? Colors.white : Colors.transparent,
+            color: selected ? colorScheme.surface : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
             boxShadow: selected
                 ? [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withOpacity(0.1),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     )
@@ -178,7 +183,7 @@ class _AuthentificationScreenState extends ConsumerState<AuthentificationScreen>
           child: Text(
             label,
             style: TextStyle(
-              color: selected ? AppColors.primary : AppColors.textSecondary,
+              color: selected ? colorScheme.primary : colorScheme.onSurfaceVariant,
               fontWeight: selected ? FontWeight.bold : FontWeight.w500,
             ),
           ),

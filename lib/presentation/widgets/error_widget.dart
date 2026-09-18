@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_colors.dart';
 
 class ErrorState extends StatelessWidget {
   final String message;
@@ -14,6 +13,8 @@ class ErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -23,13 +24,15 @@ class ErrorState extends StatelessWidget {
             Icon(
               Icons.error_outline,
               size: 64,
-              color: AppColors.error,
+              color: colorScheme.error,
             ),
             const SizedBox(height: 16),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: colorScheme.onSurface,
+                  ),
             ),
             if (onRetry != null) ...[
               const SizedBox(height: 16),
@@ -37,6 +40,7 @@ class ErrorState extends StatelessWidget {
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh),
                 label: const Text('Réessayer'),
+                style: TextButton.styleFrom(foregroundColor: colorScheme.primary),
               ),
             ],
           ],

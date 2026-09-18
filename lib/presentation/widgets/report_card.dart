@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_colors.dart';
 import '../../data/models/report.dart';
 
 class ReportCard extends StatelessWidget {
@@ -15,6 +14,7 @@ class ReportCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final statusColor = switch (report.status) {
       ReportStatus.pending => Colors.orange,
       ReportStatus.traite => Colors.green,
@@ -66,12 +66,12 @@ class ReportCard extends StatelessWidget {
                       report.description,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                      style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 13),
                     ),
                   ],
                 ),
               ),
-              Icon(Icons.chevron_right, color: AppColors.textDisabled),
+              Icon(Icons.chevron_right, color: colorScheme.onSurfaceVariant.withOpacity(0.5)),
             ],
           ),
         ),

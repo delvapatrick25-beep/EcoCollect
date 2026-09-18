@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/theme/app_colors.dart';
 import '../../core/utils/app_date_utils.dart';
 import '../providers/collection_provider.dart';
 import '../providers/tip_provider.dart';
@@ -52,6 +51,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       body: PageView(
         controller: _pageController,
@@ -69,39 +70,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: _onTabChanged,
-        indicatorColor: AppColors.primaryLight,
+        indicatorColor: colorScheme.primaryContainer,
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home, color: AppColors.primary),
+            selectedIcon: Icon(Icons.home),
             label: 'Accueil',
           ),
           NavigationDestination(
             icon: Icon(Icons.event_outlined),
-            selectedIcon: Icon(Icons.event, color: AppColors.primary),
+            selectedIcon: Icon(Icons.event),
             label: 'Collectes',
           ),
           NavigationDestination(
             icon: Icon(Icons.recycling_outlined),
-            selectedIcon: Icon(Icons.recycling, color: AppColors.primary),
+            selectedIcon: Icon(Icons.recycling),
             label: 'Tri',
           ),
           NavigationDestination(
             icon: Icon(Icons.lightbulb_outline),
-            selectedIcon: Icon(Icons.lightbulb, color: AppColors.primary),
+            selectedIcon: Icon(Icons.lightbulb),
             label: 'Conseils',
           ),
           NavigationDestination(
             icon: Icon(Icons.assessment_outlined),
-            selectedIcon: Icon(Icons.assessment, color: AppColors.primary),
+            selectedIcon: Icon(Icons.assessment),
             label: 'Signalements',
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _openNouveauSignalement,
-        backgroundColor: AppColors.accent,
-        foregroundColor: Colors.white,
+        backgroundColor: colorScheme.tertiary,
+        foregroundColor: colorScheme.onTertiary,
         icon: const Icon(Icons.add),
         label: const Text('Signaler'),
       ),
@@ -125,11 +126,12 @@ class _AccueilTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider).value;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        foregroundColor: AppColors.textPrimary,
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
         automaticallyImplyLeading: false,
         centerTitle: false,
         titleSpacing: 20,
@@ -145,7 +147,7 @@ class _AccueilTab extends ConsumerWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: AppColors.primary.withOpacity(0.2),
+                      color: colorScheme.primary.withOpacity(0.2),
                       width: 2,
                     ),
                   ),
@@ -160,13 +162,13 @@ class _AccueilTab extends ConsumerWidget {
                       user?.pseudo ?? 'Utilisateur',
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: colorScheme.onSurface,
                           ),
                     ),
                     Text(
                       user?.email ?? '',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppColors.textSecondary,
+                            color: colorScheme.onSurfaceVariant,
                           ),
                     ),
                   ],
@@ -175,7 +177,7 @@ class _AccueilTab extends ConsumerWidget {
                 Icon(
                   Icons.keyboard_arrow_right,
                   size: 20,
-                  color: AppColors.primary.withOpacity(0.5),
+                  color: colorScheme.primary.withOpacity(0.5),
                 ),
               ],
             ),
@@ -197,9 +199,9 @@ class _AccueilTab extends ConsumerWidget {
             Text(
               'Votre impact commence ici.',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontSize: 16,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: colorScheme.onSurface,
                   ),
             ),
             const SizedBox(height: 24),
@@ -210,12 +212,12 @@ class _AccueilTab extends ConsumerWidget {
             Text(
               'Raccourcis',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontSize: 16,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
             ),
             const SizedBox(height: 12),
-            _buildShortcutsGrid(),
+            _buildShortcutsGrid(colorScheme),
           ],
         ),
       ),
@@ -224,9 +226,10 @@ class _AccueilTab extends ConsumerWidget {
 
   Widget _buildNextCollectionCard(BuildContext context, WidgetRef ref) {
     final nextAsync = ref.watch(nextCollectionProvider);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
-      color: Theme.of(context).colorScheme.primaryContainer,
+      color: colorScheme.primaryContainer,
       elevation: 0,
       child: InkWell(
         onTap: () => onTabChanged(1),
@@ -238,12 +241,12 @@ class _AccueilTab extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: colorScheme.onPrimary,
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.restore_from_trash,
-                  color: AppColors.primary,
+                  color: colorScheme.primary,
                   size: 32,
                 ),
               ),
@@ -257,7 +260,7 @@ class _AccueilTab extends ConsumerWidget {
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.2,
-                            color: AppColors.primary,
+                            color: colorScheme.primary,
                           ),
                     ),
                     const SizedBox(height: 4),
@@ -265,7 +268,10 @@ class _AccueilTab extends ConsumerWidget {
                       loading: () => const LinearProgressIndicator(),
                       error: (e, _) => const Text('Erreur de chargement'),
                       data: (collection) => collection == null
-                          ? const Text('Aucune collecte prévue')
+                          ? Text(
+                              'Aucune collecte prévue',
+                              style: TextStyle(color: colorScheme.onPrimaryContainer),
+                            )
                           : Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -276,7 +282,7 @@ class _AccueilTab extends ConsumerWidget {
                                       .titleMedium
                                       ?.copyWith(
                                         fontWeight: FontWeight.bold,
-                                        color: AppColors.primaryDark,
+                                        color: colorScheme.onPrimaryContainer,
                                       ),
                                 ),
                                 Text(
@@ -285,7 +291,7 @@ class _AccueilTab extends ConsumerWidget {
                                       .textTheme
                                       .bodySmall
                                       ?.copyWith(
-                                        color: AppColors.primaryDark.withOpacity(0.7),
+                                        color: colorScheme.onPrimaryContainer.withOpacity(0.7),
                                       ),
                                 ),
                               ],
@@ -294,7 +300,7 @@ class _AccueilTab extends ConsumerWidget {
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right, color: AppColors.primary),
+              Icon(Icons.chevron_right, color: colorScheme.primary),
             ],
           ),
         ),
@@ -304,9 +310,10 @@ class _AccueilTab extends ConsumerWidget {
 
   Widget _buildTipOfTheDayCard(BuildContext context, WidgetRef ref) {
     final tipAsync = ref.watch(tipOfTheDayProvider);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
-      color: Theme.of(context).colorScheme.secondaryContainer,
+      color: colorScheme.secondaryContainer,
       elevation: 0,
       child: InkWell(
         onTap: () => onTabChanged(3),
@@ -318,12 +325,12 @@ class _AccueilTab extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: colorScheme.onSecondary,
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.lightbulb,
-                  color: AppColors.accent,
+                  color: colorScheme.tertiary,
                   size: 32,
                 ),
               ),
@@ -337,7 +344,7 @@ class _AccueilTab extends ConsumerWidget {
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.2,
-                            color: AppColors.secondary,
+                            color: colorScheme.secondary,
                           ),
                     ),
                     const SizedBox(height: 4),
@@ -350,14 +357,14 @@ class _AccueilTab extends ConsumerWidget {
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                               fontWeight: FontWeight.w600,
-                              color: AppColors.primaryDark,
+                              color: colorScheme.onSecondaryContainer,
                             ),
                       ),
                     ),
                   ],
                 ),
               ),
-              Icon(Icons.chevron_right, color: AppColors.secondary),
+              Icon(Icons.chevron_right, color: colorScheme.secondary),
             ],
           ),
         ),
@@ -365,7 +372,7 @@ class _AccueilTab extends ConsumerWidget {
     );
   }
 
-  Widget _buildShortcutsGrid() {
+  Widget _buildShortcutsGrid(ColorScheme colorScheme) {
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -377,25 +384,25 @@ class _AccueilTab extends ConsumerWidget {
         _ShortcutTile(
           icon: Icons.event,
           label: 'Collectes',
-          color: AppColors.primaryLight,
+          color: colorScheme.primaryContainer.withOpacity(0.5),
           onTap: () => onTabChanged(1),
         ),
         _ShortcutTile(
           icon: Icons.recycling,
           label: 'Points de tri',
-          color: const Color(0xFFF1F8E9),
+          color: colorScheme.secondaryContainer.withOpacity(0.5),
           onTap: () => onTabChanged(2),
         ),
         _ShortcutTile(
           icon: Icons.lightbulb,
           label: 'Conseils',
-          color: const Color(0xFFFFF3E0),
+          color: colorScheme.tertiaryContainer.withOpacity(0.5),
           onTap: () => onTabChanged(3),
         ),
         _ShortcutTile(
           icon: Icons.assessment,
           label: 'Mes signalements',
-          color: const Color(0xFFE3F2FD),
+          color: colorScheme.surfaceVariant.withOpacity(0.5),
           onTap: () => onTabChanged(4),
         ),
       ],
@@ -418,6 +425,8 @@ class _ShortcutTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    
     return Card(
       color: color,
       elevation: 0,
@@ -429,14 +438,14 @@ class _ShortcutTile extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: AppColors.primary, size: 28),
+            Icon(icon, color: colorScheme.primary, size: 28),
             const SizedBox(height: 8),
             Text(
               label,
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
-                color: AppColors.primaryDark,
+                color: colorScheme.onSurface,
               ),
             ),
           ],

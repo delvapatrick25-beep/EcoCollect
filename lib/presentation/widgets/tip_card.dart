@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_colors.dart';
 import '../../data/models/tip.dart';
 
 class TipCard extends StatelessWidget {
@@ -15,6 +14,8 @@ class TipCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Card(
       child: InkWell(
         onTap: onTap,
@@ -34,15 +35,15 @@ class TipCard extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                           decoration: BoxDecoration(
-                            color: AppColors.accentContainer.withOpacity(0.5),
+                            color: colorScheme.tertiaryContainer,
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
                             tip.categorie.toUpperCase(),
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.accent,
+                              color: colorScheme.onTertiaryContainer,
                             ),
                           ),
                         ),
@@ -57,7 +58,7 @@ class TipCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  const Icon(Icons.lightbulb, color: AppColors.accent, size: 28),
+                  Icon(Icons.lightbulb, color: colorScheme.tertiary, size: 28),
                 ],
               ),
               const SizedBox(height: 8),
@@ -65,11 +66,11 @@ class TipCard extends StatelessWidget {
                 tip.contenu,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-style: TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 14,
-                    height: 1.4,
-                  ),
+                style: TextStyle(
+                  color: colorScheme.onSurfaceVariant,
+                  fontSize: 14,
+                  height: 1.4,
+                ),
               ),
             ],
           ),

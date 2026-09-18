@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_colors.dart';
 import '../../data/models/recycling_point.dart';
 
 class RecyclingPointCard extends StatelessWidget {
@@ -15,6 +14,8 @@ class RecyclingPointCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Card(
       child: InkWell(
         onTap: onTap,
@@ -29,10 +30,10 @@ class RecyclingPointCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: AppColors.primaryLight,
+                      color: colorScheme.primaryContainer,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(Icons.location_on, color: AppColors.primary),
+                    child: Icon(Icons.location_on, color: colorScheme.primary),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -48,7 +49,7 @@ class RecyclingPointCard extends StatelessWidget {
               const SizedBox(height: 12),
               Text(
                 point.adresse,
-                style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 13),
               ),
               const SizedBox(height: 12),
               Wrap(
@@ -58,16 +59,15 @@ class RecyclingPointCard extends StatelessWidget {
                   return Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: AppColors.surfaceVariant.withOpacity(0.5),
+                      color: colorScheme.surfaceVariant,
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AppColors.border.withOpacity(0.3)),
                     ),
                     child: Text(
                       type,
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.primaryDark,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                     ),
                   );

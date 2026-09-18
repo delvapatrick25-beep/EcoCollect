@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_colors.dart';
 import 'home_screen.dart';
 
 class ConfirmationScreen extends StatefulWidget {
@@ -40,6 +39,8 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -51,13 +52,13 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryLight.withOpacity(0.5),
+                    color: colorScheme.primaryContainer.withOpacity(0.5),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.check_circle,
                     size: 100,
-                    color: AppColors.primary,
+                    color: colorScheme.primary,
                   ),
                 ),
                 const SizedBox(height: 32),
@@ -65,14 +66,14 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                   'Signalement envoyé !',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primaryDark,
+                        color: colorScheme.onSurface,
                       ),
                 ),
                 const SizedBox(height: 12),
                 Text(
                   'Votre signalement a été enregistré avec succès et sera traité dans les plus brefs délais.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: AppColors.textSecondary, height: 1.5),
+                  style: TextStyle(color: colorScheme.onSurfaceVariant, height: 1.5),
                 ),
                 const SizedBox(height: 48),
                 SizedBox(
@@ -88,9 +89,9 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                     MaterialPageRoute<void>(builder: (_) => const HomeScreen()),
                     (route) => false,
                   ),
-                  child: const Text(
+                  child: Text(
                     'Retour à l\'accueil',
-                    style: TextStyle(color: AppColors.primary),
+                    style: TextStyle(color: colorScheme.primary),
                   ),
                 ),
               ],

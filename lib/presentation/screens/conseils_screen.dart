@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/theme/app_colors.dart';
 import '../../data/models/tip.dart';
 import '../../presentation/providers/tip_provider.dart';
 import '../../presentation/widgets/detail_bottom_sheet.dart';
@@ -102,6 +101,8 @@ class _ConseilsScreenState extends ConsumerState<ConseilsScreen> {
   }
 
   void _showDetails(BuildContext context, Tip tip) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     DetailBottomSheet.show(
       context,
       title: tip.titre,
@@ -111,13 +112,13 @@ class _ConseilsScreenState extends ConsumerState<ConseilsScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: AppColors.primaryLight,
+              color: colorScheme.primaryContainer,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
               tip.categorie,
               style: TextStyle(
-                color: AppColors.primaryDark,
+                color: colorScheme.onPrimaryContainer,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),
@@ -129,7 +130,7 @@ class _ConseilsScreenState extends ConsumerState<ConseilsScreen> {
             style: TextStyle(
               fontSize: 15,
               height: 1.5,
-              color: AppColors.textPrimary,
+              color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 8),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/theme/app_colors.dart';
 import '../../core/utils/snackbar_utils.dart';
 import '../../data/models/report.dart';
 import '../../presentation/providers/report_provider.dart';
@@ -80,7 +79,7 @@ class _MesSignalementsScreenState extends ConsumerState<MesSignalementsScreen> {
                               padding: const EdgeInsets.only(right: 20),
                               alignment: Alignment.centerRight,
                               decoration: BoxDecoration(
-                                color: AppColors.error,
+                                color: Theme.of(context).colorScheme.error,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: const Icon(Icons.delete_outline, color: Colors.white),

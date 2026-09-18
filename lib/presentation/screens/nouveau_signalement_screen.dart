@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../core/theme/app_colors.dart';
 import '../../core/utils/validators.dart';
 import '../../data/models/report.dart';
 import '../providers/auth_provider.dart';
@@ -111,6 +110,8 @@ class _NouveauSignalementScreenState
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Nouveau signalement')),
       body: SafeArea(
@@ -150,7 +151,7 @@ class _NouveauSignalementScreenState
                         ),
                   ),
                   const SizedBox(height: 12),
-                  _buildPhotoSection(),
+                  _buildPhotoSection(colorScheme),
                   const SizedBox(height: 24),
                   Text(
                     'Localisation',
@@ -159,19 +160,19 @@ class _NouveauSignalementScreenState
                         ),
                   ),
                   const SizedBox(height: 12),
-                  _buildLocationIndicator(),
+                  _buildLocationIndicator(colorScheme),
                   if (_errorMessage != null) ...[
                     const SizedBox(height: 24),
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: AppColors.error.withOpacity(0.1),
+                        color: colorScheme.errorContainer,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
                         _errorMessage!,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(color: AppColors.error),
+                        style: TextStyle(color: colorScheme.onErrorContainer),
                       ),
                     ),
                   ],
@@ -221,7 +222,7 @@ class _NouveauSignalementScreenState
     );
   }
 
-  Widget _buildPhotoSection() {
+  Widget _buildPhotoSection(ColorScheme colorScheme) {
     return Card(
       child: InkWell(
         onTap: _submitting ? null : _pickPhoto,
@@ -260,13 +261,13 @@ class _NouveauSignalementScreenState
                     Icon(
                       Icons.add_a_photo_outlined,
                       size: 32,
-                      color: AppColors.primary.withOpacity(0.7),
+                      color: colorScheme.primary.withOpacity(0.7),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Cliquez pour ajouter une photo',
                       style: TextStyle(
-                        color: AppColors.textSecondary,
+                        color: colorScheme.onSurfaceVariant,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -277,7 +278,7 @@ class _NouveauSignalementScreenState
     );
   }
 
-  Widget _buildLocationIndicator() {
+  Widget _buildLocationIndicator(ColorScheme colorScheme) {
     return Card(
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -300,7 +301,7 @@ class _NouveauSignalementScreenState
                     children: [
                       Icon(
                         _position != null ? Icons.location_on : Icons.location_off,
-                        color: _position != null ? AppColors.primary : AppColors.textDisabled,
+                        color: _position != null ? colorScheme.primary : colorScheme.outline,
                       ),
                       const SizedBox(width: 12),
                       Expanded(

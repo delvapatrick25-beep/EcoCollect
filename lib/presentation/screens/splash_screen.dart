@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/app_constants.dart';
-import '../../core/theme/app_colors.dart';
 import '../providers/service_providers.dart';
 import '../widgets/loading_widget.dart';
 import 'authentification_screen.dart';
@@ -41,8 +40,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: AppColors.primaryLight,
+      backgroundColor: colorScheme.primaryContainer,
       body: SafeArea(
         child: Center(
           child: TweenAnimationBuilder<double>(
@@ -61,17 +62,17 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
+                Icon(
                   Icons.recycling,
                   size: 100,
-                  color: AppColors.primary,
+                  color: colorScheme.primary,
                 ),
                 const SizedBox(height: 24),
                 Text(
                   AppConstants.appName,
                   style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primaryDark,
+                        color: colorScheme.onPrimaryContainer,
                         letterSpacing: 4,
                       ),
                 ),
@@ -79,7 +80,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                 Text(
                   AppConstants.appTagline,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.textSecondary,
+                        color: colorScheme.onSurfaceVariant,
                         letterSpacing: 1.1,
                       ),
                 ),

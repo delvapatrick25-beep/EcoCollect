@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/app_constants.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/theme_provider.dart';
 import '../../core/utils/app_date_utils.dart';
 import '../../core/utils/snackbar_utils.dart';
@@ -92,6 +91,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final pointCount = ref.watch(recyclingPointProvider).value?.length ?? 0;
     final tipCount = ref.watch(tipProvider).value?.length ?? 0;
     final collectionCount = ref.watch(collectionProvider).value?.length ?? 0;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -106,33 +106,34 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         children: [
-          _buildHeader(user),
+          _buildHeader(context, user, colorScheme),
           const SizedBox(height: 24),
-          _sectionTitle('Compte'),
-          _buildAccountCard(user),
+          _sectionTitle(context, 'Compte', colorScheme),
+          _buildAccountCard(user, colorScheme),
           const SizedBox(height: 24),
-          _sectionTitle('Apparence'),
-          _buildAppearanceCard(isDark, themeAsync.isLoading),
+          _sectionTitle(context, 'Apparence', colorScheme),
+          _buildAppearanceCard(isDark, themeAsync.isLoading, colorScheme),
           const SizedBox(height: 24),
-          _sectionTitle('Mes activités'),
+          _sectionTitle(context, 'Mes activités', colorScheme),
           _buildStatsRow(
+            colorScheme: colorScheme,
             reportCount: reportCount,
             pointCount: pointCount,
             tipCount: tipCount,
             collectionCount: collectionCount,
           ),
           const SizedBox(height: 24),
-          _sectionTitle('À propos'),
-          _buildAboutCard(),
+          _sectionTitle(context, 'À propos', colorScheme),
+          _buildAboutCard(colorScheme),
           const SizedBox(height: 32),
-          _buildLogoutButton(),
+          _buildLogoutButton(colorScheme),
           const SizedBox(height: 16),
         ],
       ),
     );
   }
 
-  Widget _buildHeader(UserAccount? user) {
+  Widget _buildHeader(BuildContext context, UserAccount? user, ColorScheme colorScheme) {
     final pseudo = user?.pseudo ?? '';
     final email = user?.email ?? '';
 
@@ -148,14 +149,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 pseudo.isEmpty ? 'Utilisateur' : pseudo,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: colorScheme.onSurface,
                     ),
               ),
               const SizedBox(height: 2),
               Text(
                 email.isEmpty ? '—' : email,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textSecondary,
+                      color: colorScheme.onSurfaceVariant,
                     ),
               ),
             ],
@@ -165,7 +166,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  Widget _sectionTitle(String title) {
+  Widget _sectionTitle(BuildContext context, String title, ColorScheme colorScheme) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Text(
@@ -173,34 +174,34 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
               fontWeight: FontWeight.bold,
               letterSpacing: 1.2,
-              color: AppColors.secondary,
+              color: colorScheme.secondary,
             ),
       ),
     );
   }
 
-  Widget _buildAccountCard(UserAccount? user) {
+  Widget _buildAccountCard(UserAccount? user, ColorScheme colorScheme) {
     return Card(
       child: Column(
         children: [
           ListTile(
-            leading: const Icon(Icons.badge_outlined, color: AppColors.primary),
+            leading: Icon(Icons.badge_outlined, color: colorScheme.primary),
             title: const Text('Pseudo'),
             subtitle: Text(user?.pseudo ?? '—'),
-            trailing: const Icon(Icons.edit_outlined, color: AppColors.primary),
+            trailing: Icon(Icons.edit_outlined, color: colorScheme.primary),
             onTap: _editPseudo,
           ),
           const Divider(height: 1, indent: 56),
           ListTile(
-            leading: const Icon(Icons.email_outlined, color: AppColors.primary),
+            leading: Icon(Icons.email_outlined, color: colorScheme.primary),
             title: const Text('Adresse e-mail'),
             subtitle: Text(user?.email ?? '—'),
           ),
           const Divider(height: 1, indent: 56),
           ListTile(
-            leading: const Icon(
+            leading: Icon(
               Icons.calendar_today_outlined,
-              color: AppColors.primary,
+              color: colorScheme.primary,
             ),
             title: const Text('Membre depuis'),
             subtitle: Text(
@@ -214,12 +215,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  Widget _buildAppearanceCard(bool isDark, bool loading) {
+  Widget _buildAppearanceCard(bool isDark, bool loading, ColorScheme colorScheme) {
     return Card(
       child: SwitchListTile(
         secondary: Icon(
           isDark ? Icons.dark_mode : Icons.light_mode,
-          color: AppColors.accent,
+          color: colorScheme.tertiary,
         ),
         title: const Text('Mode sombre'),
         subtitle: const Text('Basculez entre clair et sombre'),
@@ -234,6 +235,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Widget _buildStatsRow({
+    required ColorScheme colorScheme,
     required int reportCount,
     required int pointCount,
     required int tipCount,
@@ -244,27 +246,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
         child: Row(
           children: [
-            _Stat(icon: Icons.assessment, count: reportCount, label: 'Signalements'),
-            _Stat(icon: Icons.recycling, count: pointCount, label: 'Points de tri'),
-            _Stat(icon: Icons.lightbulb, count: tipCount, label: 'Conseils'),
-            _Stat(icon: Icons.event, count: collectionCount, label: 'Collectes'),
+            _Stat(colorScheme: colorScheme, icon: Icons.assessment, count: reportCount, label: 'Signalements'),
+            _Stat(colorScheme: colorScheme, icon: Icons.recycling, count: pointCount, label: 'Points de tri'),
+            _Stat(colorScheme: colorScheme, icon: Icons.lightbulb, count: tipCount, label: 'Conseils'),
+            _Stat(colorScheme: colorScheme, icon: Icons.event, count: collectionCount, label: 'Collectes'),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildAboutCard() {
+  Widget _buildAboutCard(ColorScheme colorScheme) {
     return Card(
       child: ListTile(
-        leading: const Icon(Icons.eco, color: AppColors.primary),
+        leading: Icon(Icons.eco, color: colorScheme.primary),
         title: Text(AppConstants.appName),
         subtitle: const Text('Version 1.0.0 • Votre assistant éco-responsable'),
       ),
     );
   }
 
-  Widget _buildLogoutButton() {
+  Widget _buildLogoutButton(ColorScheme colorScheme) {
     return SizedBox(
       width: double.infinity,
       child: OutlinedButton.icon(
@@ -272,8 +274,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         icon: const Icon(Icons.logout),
         label: const Text('Se déconnecter'),
         style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.error,
-          side: BorderSide(color: AppColors.error),
+          foregroundColor: colorScheme.error,
+          side: BorderSide(color: colorScheme.error),
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -286,11 +288,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
 class _Stat extends StatelessWidget {
   const _Stat({
+    required this.colorScheme,
     required this.icon,
     required this.count,
     required this.label,
   });
 
+  final ColorScheme colorScheme;
   final IconData icon;
   final int count;
   final String label;
@@ -300,13 +304,13 @@ class _Stat extends StatelessWidget {
     return Expanded(
       child: Column(
         children: [
-          Icon(icon, color: AppColors.primary, size: 22),
+          Icon(icon, color: colorScheme.primary, size: 22),
           const SizedBox(height: 6),
           Text(
             '$count',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: colorScheme.onSurface,
                 ),
           ),
           const SizedBox(height: 2),
@@ -316,7 +320,7 @@ class _Stat extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColors.textSecondary,
+                  color: colorScheme.onSurfaceVariant,
                 ),
           ),
         ],

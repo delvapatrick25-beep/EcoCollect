@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
 
 class SnackBarUtils {
   SnackBarUtils._();
 
   static void showSuccess(BuildContext context, String message) {
+    final colorScheme = Theme.of(context).colorScheme;
     _show(
       context,
       message,
-      backgroundColor: AppColors.primary,
+      backgroundColor: colorScheme.primary,
       icon: Icons.check_circle_outline,
     );
   }
 
   static void showError(BuildContext context, String message) {
+    final colorScheme = Theme.of(context).colorScheme;
     _show(
       context,
       message,
-      backgroundColor: AppColors.error,
+      backgroundColor: colorScheme.error,
       icon: Icons.error_outline,
     );
   }

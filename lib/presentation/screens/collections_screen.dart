@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/theme/app_colors.dart';
 import '../../core/utils/app_date_utils.dart';
 import '../../data/models/collection.dart';
 import '../../presentation/providers/collection_provider.dart';
@@ -141,6 +140,8 @@ class _InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Text.rich(
@@ -149,13 +150,13 @@ class _InfoRow extends StatelessWidget {
             TextSpan(
               text: '$label : ',
               style: TextStyle(
-                color: AppColors.textSecondary,
+                color: colorScheme.onSurfaceVariant,
               ),
             ),
             TextSpan(
               text: value,
               style: TextStyle(
-                color: AppColors.textPrimary,
+                color: colorScheme.onSurface,
                 fontWeight: FontWeight.w600,
               ),
             ),
