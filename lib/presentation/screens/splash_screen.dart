@@ -18,7 +18,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _redirect();
+    // Attendre que la 1re frame soit réellement affichée avant de démarrer le
+    // compte à rebours : sur un appareil lent, initState peut s'exécuter avant
+    // le premier rendu et le Splash se ferait remplacer sans avoir été vu.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _redirect();
+    });
   }
 
   Future<void> _redirect() async {
